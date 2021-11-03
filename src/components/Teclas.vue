@@ -1,5 +1,4 @@
 <template>
-<button @click="test()">TESTIABLE</button>
   <div class="row p-2" id="menusColores">
     <template v-if="listaMenus.length <= 11">
       <div v-for="(item, index) of listaMenus" :key="item.nomMenu" @click="clickMenu(index)" class="col colJuntitasMenus menus" style="padding-left: 4px;">
@@ -115,7 +114,9 @@ export default {
       return false;
     }
     function modalesSumable(articuloAPeso, idBoton) {
-      store.dispatch('ModalPeso/abrirModal', { idArticulo: articuloAPeso.idArticle, idBoton });
+      axios.post('articulos/getArticulo', { idArticulo: articuloAPeso.idArticle }).then((res) => {
+        store.dispatch('ModalPeso/abrirModal', { idArticulo: articuloAPeso.idArticle, idBoton, precioConIva: res.data.precioConIva });
+      })
     }
     function mostrarInfoVisor(objListadoTeclas) {
       const a = objListadoTeclas;

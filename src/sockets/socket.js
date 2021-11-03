@@ -3,7 +3,7 @@ const socket = io('http://localhost:3000');
 
 socket.emit('test', 'andate a la concha de tu madre');
 
-socket.on('message', (data) => {
+socket.on('resDatafono', (data) => {
     console.log(data);
 });
 

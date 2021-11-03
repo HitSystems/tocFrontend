@@ -11,7 +11,7 @@
             <div class="card cardWidth">
                 <div class="card-body" style='text-align: center;'>
                     <span><i class="bi bi-cup-straw"></i></span>
-                    <a href="#" class="btn btn-primary">Consumo personal</a>
+                    <button @click="consumoPersonal()" class="btn btn-primary">Consumo personal</button>
                 </div>
             </div>
         </div>
@@ -41,7 +41,7 @@
                             <tbody>
                                 <tr v-for="(trabajador, index) of arrayTrabajadores" v-bind:key="index">
                                     <td>{{trabajador.nombre}}</td>
-                                    <td v-if="trabajador.fichado === false"><a href="#" class="btn btn-outline-primary btn_fc" @click="fichar(trabajador, index)">FICHAR</a></td>
+                                    <td v-if="trabajador.fichado === false || trabajador.fichado == undefined"><a href="#" class="btn btn-outline-primary btn_fc" @click="fichar(trabajador, index)">FICHAR</a></td>
                                     <td v-else><a href="#" class="btn btn-outline-success btn_fc" @click="desfichar(trabajador, index)">DESFICHAR</a></td>
                                 </tr>
                             </tbody>
@@ -61,10 +61,13 @@
 import { Modal } from 'bootstrap';
 import { onMounted, ref } from 'vue';
 import axios from 'axios';
+import { useStore } from 'vuex';
+import router from '../router/index';
 
 export default {
     name: 'Dependientas',
     setup() {
+        const store = useStore();
         const nombre = 'Santy';
         const id = 156;
         let modalFichajes = null;
@@ -80,7 +83,6 @@ export default {
         }
 
         function buscar() {
-            console.log(inputBusqueda.value);
             axios.post('trabajadores/buscar', { busqueda: inputBusqueda.value }).then((res) => {
                 arrayTrabajadores.value = res.data;
             }).catch((err) => {
@@ -115,6 +117,12 @@ export default {
             });
         }
 
+        function consumoPersonal() {
+            store.dispatch('setModoActual', 'CONSUMO PERSONAL');
+            store.dispatch('Footer/setMenuActivo', 1);
+            router.push('/');
+        }
+
         onMounted(() => {
             modalFichajes = new Modal(document.getElementById('modalFichajes'), {
                 keyboard: false,
@@ -122,6 +130,7 @@ export default {
         });
 
         return {
+            consumoPersonal,
             fichar,
             desfichar,
             inputBusqueda,

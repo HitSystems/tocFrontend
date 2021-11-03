@@ -51,16 +51,15 @@
 <script>
 import { onMounted, computed, ref } from 'vue';
 import { useStore } from 'vuex';
-// import axios from "axios";
+import axios from 'axios';
 
 export default {
   name: 'ModalPeso',
   setup() {
     const store = useStore();
     const unidades = ref('0');
-    const infoArticulo = ref({
-      precioConIva: 0,
-    });
+    const cesta = computed(() => store.state.Cesta.cesta);
+    const infoArticulo = computed(() => store.state.ModalPeso);
     // var idBoton = null;
     const getUnidades = computed(() => {
       const valor = parseInt(unidades.value, 10);
@@ -85,6 +84,21 @@ export default {
     }
     function confirmar() {
       store.dispatch('ModalPeso/cerrarModal');
+      axios.post('cestas/clickTeclaArticulo', {
+        idArticulo: infoArticulo.value.idArticulo,
+        idBoton: infoArticulo.value.idBoton,
+        peso: true,
+        infoAPeso: {
+          precioAplicado: getPrecio.value,
+        },
+        idCesta: cesta.value._id
+      }).then((res2) => {
+        if (res2.data.error === false && res2.data.bloqueado === false) {
+          store.dispatch('Cesta/setCestaAction', res2.data.cesta);
+        } else {
+          console.log('Error en clickTeclaArticulo');
+        }
+      });
       unidades.value = '0';
     }
 

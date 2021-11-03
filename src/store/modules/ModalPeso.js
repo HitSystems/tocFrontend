@@ -6,6 +6,9 @@ export default {
     tareasState: ['tarea 1', 'tarea 2', 'tarea 3'],
     edadState: 26,
     modal: null,
+    idArticulo: 0,
+    idBoton: '',
+    precioConIva: 0,
   },
   mutations: {
     testMutation(state, payload) {
@@ -14,6 +17,9 @@ export default {
     abrirModalMutation(state, payload) {
       console.log(payload);
       state.modal.show();
+      state.idArticulo = payload.idArticulo;
+      state.idBoton = payload.idBoton;
+      state.precioConIva = payload.precioConIva;
     },
     setModalMutation(state) {
       const modalElement = document.getElementById('modalTecladoPeso');
