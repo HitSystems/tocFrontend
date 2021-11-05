@@ -14,6 +14,9 @@ export default {
     setActivoMutation(state, payload) {
       state.activo = payload;
     },
+    setIdAction(state, payload) {
+      state.cesta._id = payload;
+    }
   },
   getters: {
     // eslint-disable-next-line no-underscore-dangle
@@ -27,5 +30,8 @@ export default {
     setActivoAction({ commit }, activo) {
       commit('setActivoMutation', activo);
     },
+    setIdAction({ commit }, id) {
+      commit('setIdAction', id)
+    }
   },
 };

@@ -115,7 +115,7 @@
                 </td>
                 <td v-else>{{item.nombre}}</td>
                 <td>{{item.unidades}}</td>
-                <td>{{item.subtotal.toFixed(2)}}</td>
+                <td v-if="item.subtotal !== null">{{item.subtotal.toFixed(2)}}</td>
               </tr>
             </tbody>
           </table>
@@ -212,7 +212,7 @@ export default {
           suma += cesta.value.lista[i].subtotal;
         }
       }
-      return suma.toFixed(2);
+      return suma === 0 ? 0 : suma.toFixed(2);
     });
     const cestaAlReves = computed(() => {
       const aux = cesta.value.lista; // Reverse muta el array.
@@ -234,7 +234,8 @@ export default {
     }
 
     const thisIsCatalunya = computed(() => {
-      return getTotal.value.replace('.', ',');
+      console.log(getTotal.value);
+      return getTotal.value % 1 !== 0 ? getTotal.value.replace('.', ',') : getTotal.value;
     });
 
     function crearTicketDeuda(total, idCesta, idClienteFinal, infoClienteVip) {
@@ -373,7 +374,7 @@ export default {
       toastList = toastElList.map((toastEl) => new Toast(toastEl));
 
       /* INICIALIZACIÓN DE CESTA */
-      axios.post('/cestas/getCesta').then((res) => {
+      axios.post('/cestas/getCesta', { id: cesta.value._id }).then((res) => {
         store.dispatch('Cesta/setCestaAction', res.data);
       });
 
@@ -426,7 +427,8 @@ export default {
     function borrar() {
       if (activo.value === null) {
         /* eslint no-underscore-dangle: 0 */
-        axios.post('/cestas/borrarCesta', { id: cesta.value._id }).then((cestaVacia) => {
+        axios.post('/cestas/borrarArticulosCesta', { id: cesta.value._id }).then((cestaVacia) => {
+          console.log(cestaVacia);
           store.dispatch('Cesta/setCestaAction', cestaVacia.data.cestaNueva);
         });
         // ipcRenderer.send('mostrar-visor', {texto: "", p
