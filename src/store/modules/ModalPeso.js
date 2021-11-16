@@ -15,7 +15,7 @@ export default {
       state.edadState = payload;
     },
     abrirModalMutation(state, payload) {
-      console.log(payload);
+      console.log(payload, state);
       state.modal.show();
       state.idArticulo = payload.idArticulo;
       state.idBoton = payload.idBoton;

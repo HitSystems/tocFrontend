@@ -1,9 +1,10 @@
 <template>
   <div>
-    <Teclas/>
-    <ModalPeso/>
-    <Footer/>
-    <ToastComponent/>
+    <Teclas />
+    <ModalPeso />
+    <ModalSuplementos />
+    <Footer />
+    <ToastComponent />
   </div>
 </template>
 
@@ -13,6 +14,7 @@ import Teclas from '@/components/Teclas.vue'; // @ is an alias to /src
 import ModalPeso from '@/components/ModalPeso.vue'; // @ is an alias to /src
 import Footer from '@/components/Footer.vue'; // @ is an alias to /src
 import ToastComponent from '@/components/Toast.vue';
+import ModalSuplementos from '@/components/ModalSuplementos.vue';
 
 export default {
   name: 'Home',
@@ -21,6 +23,7 @@ export default {
     ModalPeso,
     Footer,
     ToastComponent,
+    ModalSuplementos,
   },
 };
 </script>

@@ -26,6 +26,8 @@ import socket from '../sockets/socket';
 
 import Caja from './modules/Caja';
 
+import Suplementos from './modules/Suplementos';
+
 let toastElList = null;
 let toastList = null;
 let timeoutBorrar = null;
@@ -99,5 +101,6 @@ export default createStore({
     Clientes,
     Caja,
     Footer,
+    Suplementos,
   },
 });

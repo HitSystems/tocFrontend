@@ -450,6 +450,7 @@ export default {
       }
     }
     function clickTecla(objListadoTeclas, esAPeso = false) {
+      console.log(cesta.value._id)
       if (!esAPeso) {
         axios.post('cestas/setUnidadesAplicar', { unidades: unidadesAplicar }).then((res) => {
           if (res.data.okey) {
@@ -462,7 +463,12 @@ export default {
                 idCesta: cesta.value._id
               }).then((res2) => {
                 if (res2.data.error === false && res2.data.bloqueado === false) {
-                  store.dispatch('Cesta/setCestaAction', res2.data.cesta);
+                  if(res2.data.modalSuplementos) {
+                    console.log(res2.data)
+                    store.dispatch('Suplementos/abrirModal', { idArticulo: objListadoTeclas.idArticle, idBoton: objListadoTeclas.idBoton, precioConIva: 0, suplementos: res2.data.suplementos });
+                  } else {
+                    store.dispatch('Cesta/setCestaAction', res2.data.cesta);
+                  }
                 } else {
                   console.log('Error en clickTeclaArticulo');
                 }
