@@ -40,7 +40,6 @@ export default {
     const unidades = ref('0');
     const cesta = computed(() => store.state.Cesta.cesta);
     const infoArticulo = computed(() => store.state.Suplementos);
-    // var idBoton = null;
     const suplementos = computed(() => store.state.Suplementos.suplementos);
     
     function seleccionarSuplemento(id) {
