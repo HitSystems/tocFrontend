@@ -130,6 +130,9 @@
                     src="../assets/imagenes/img-3g-disabled.png"
                     alt="Cobrar con tarjeta" width="185">
                 </div>
+                <button class="col-md-4 text-center" data-bs-toggle="modal" data-bs-target="#modalEncargos">
+                  Encargos
+                </button>
             </div>
             <!-- <div class="row mt-2">
               TICKET RESTAURANTE DESHABILITADO
@@ -198,12 +201,14 @@
       </div>
     </div>
   </div>
+  <EncargosComponent />
 </template>
 
 <script>
 import axios from 'axios';
 import { useStore } from 'vuex';
 import { useRoute } from 'vue-router';
+import EncargosComponent from '@/components/EncargosComponent.vue'; // @ is an alias to /src
 
 import {
   computed,
@@ -217,6 +222,9 @@ import { socket } from '../sockets/socket';
 
 export default {
   name: 'CobroComponent',
+  components: {
+    EncargosComponent,
+  },
   setup() {
     const route = useRoute();
     const store = useStore();
@@ -244,6 +252,10 @@ export default {
       cuentaAsistenteTecladoV.value = 0;
       totalTkrs.value = 0;
       cuenta.value = 0;
+    }
+
+    function encargos() {
+      store.dispatch('Encargos/abrirModal', { idArticulo: 2, idBoton: 1, precioConIva: 0 });
     }
 
     function agregarTecla(x) {
@@ -429,6 +441,7 @@ export default {
     function test() {
       console.log('test vacío');
     }
+
     onMounted(() => {
       // socket.on('resDatafono', (data) => {
       //   console.log(data);
@@ -483,6 +496,7 @@ export default {
       volver,
       cobrar,
       esperando,
+      encargos,
     };
   },
 };

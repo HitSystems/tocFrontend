@@ -28,6 +28,8 @@ import Caja from './modules/Caja';
 
 import Suplementos from './modules/Suplementos';
 
+import Encargos from './modules/Encargos';
+
 let toastElList = null;
 let toastList = null;
 let timeoutBorrar = null;
@@ -102,5 +104,6 @@ export default createStore({
     Caja,
     Footer,
     Suplementos,
+    Encargos,
   },
 });
