@@ -1,7 +1,5 @@
 import { createStore } from 'vuex';
 
-import { Toast } from 'bootstrap';
-
 import InstallWizard from './modules/InstallWizard';
 
 import ModalPeso from './modules/ModalPeso';
@@ -26,12 +24,6 @@ import socket from '../sockets/socket';
 
 import Caja from './modules/Caja';
 
-import Suplementos from './modules/Suplementos';
-
-import Encargos from './modules/Encargos';
-
-let toastElList = null;
-let toastList = null;
 let timeoutBorrar = null;
 
 window.addEventListener('contextmenu', function (e) { 
@@ -43,19 +35,18 @@ export default createStore({
   state: {
     parametros: null,
     modoActual: 'NORMAL',
-    toast: {
-      tipo: 'INFO',
-      mensaje: '',
-    },
-    toastActivo: false
+    unidades: '0',
+    esperandoDatafono: false
   },
   getters: {
     getModoActual: (state) => state.modoActual,
-    getParametros: (state) => state.parametros
+    getParametros: (state) => state.parametros,
+    getUnidades: (state) => Number(state.unidades),
+    getEsperandoDatafono: (state) => state.esperandoDatafono
   },
   mutations: {
-    setToastMutation(state, payload) {
-      state.toast = payload;
+    setEsperandoDatafonoMutation(state, payload) {
+      state.esperandoDatafono = payload;
     },
     setModoActualMutation(state, payload) {
       state.modoActual = payload;
@@ -63,32 +54,40 @@ export default createStore({
     setParametrosMutation(state, payload) {
       state.parametros = payload;
     },
-    setToastActivoMutation(state, payload) {
-      state.toastActivo = payload;
+    setUnidadesMutation(state, payload) {
+      const aux = state.unidades + payload;
+      state.unidades = `${Number(aux)}`;
+    },
+    resetUnidadesMutation(state) {
+      state.unidades = '0';
+    },
+    borrarDigitoMutation(state) {
+      const aux = state.unidades.slice(0, -1);
+      if (aux == '') {
+        state.unidades = '0'
+      } else {
+        state.unidades = aux;
+      }
     }
   },
   actions: {
-    initToast() {
-      toastElList = [].slice.call(document.querySelectorAll('.toast'));
-      toastList = toastElList.map((toastEl) => new Toast(toastEl));
-    },
-    setToastAction({ commit }, payload) {
-      commit('setToastMutation', payload);
-    },
-    showToast({ commit }) {
-      toastList[0].show();
-      commit('setToastActivoMutation', true);
-      clearTimeout(timeoutBorrar);
-      timeoutBorrar = setTimeout(() => {  commit('setToastActivoMutation', false); }, 2500);
-    },
-    hideToast({ commit }) {
-      commit('setToastActivoMutation', false);
+    setEsperandoDatafono({ commit }, payload) {
+      commit('setEsperandoDatafonoMutation', payload);
     },
     setModoActual({ commit }, payload) {
       commit('setModoActualMutation', payload);
     },
     setParametros({ commit }, payload) {
       commit('setParametrosMutation', payload);
+    },
+    addDigitoUnidades({ commit }, unidades) {
+      commit('setUnidadesMutation', unidades);
+    },
+    resetUnidades({ commit }) {
+      commit('resetUnidadesMutation');
+    },
+    borrarDigitoUnidades({ commit }) {
+      commit('borrarDigitoMutation');
     }
   },
   modules: {
@@ -103,7 +102,5 @@ export default createStore({
     Clientes,
     Caja,
     Footer,
-    Suplementos,
-    Encargos,
   },
 });

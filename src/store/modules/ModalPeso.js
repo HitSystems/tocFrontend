@@ -8,18 +8,18 @@ export default {
     modal: null,
     idArticulo: 0,
     idBoton: '',
-    precioConIva: 0,
+    precioConIva: 0
   },
   mutations: {
     testMutation(state, payload) {
       state.edadState = payload;
     },
     abrirModalMutation(state, payload) {
-      console.log(payload, state);
-      state.modal.show();
+      console.log(payload);
       state.idArticulo = payload.idArticulo;
       state.idBoton = payload.idBoton;
       state.precioConIva = payload.precioConIva;
+      state.modal.show();
     },
     setModalMutation(state) {
       const modalElement = document.getElementById('modalTecladoPeso');

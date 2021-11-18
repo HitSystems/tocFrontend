@@ -5,6 +5,7 @@ const routes = [
   {
     path: '/',
     name: 'Home',
+    props: true,
     component: Home,
   },
   {
@@ -23,6 +24,11 @@ const routes = [
     component: () => import('../views/AbrirCaja.vue'),
   },
   {
+    path: '/menuTecnico',
+    name: 'Menu Técnico',
+    component: () => import('../views/MenuTecnico.vue'),
+  },
+  {
     path: '/cerrarCaja',
     name: 'Cerrar Caja',
     component: () => import('../views/CerrarCaja.vue'),
@@ -34,6 +40,7 @@ const routes = [
     children: [
       {
         path: 'caja',
+        name:'cajaMenu',
         component: () => import('../components/Caja.vue'),
       },
       {
@@ -52,21 +59,12 @@ const routes = [
         path: 'entregas',
         component: () => import('../components/Entregas.vue'),
       },
-      {
-        path: 'menu-tecnico',
-        component: () => import('../components/MenuTecnico.vue'),
-      },
     ],
   },
   {
     path: '/mesas',
     name: 'Mesas',
     component: () => import('../views/Mesas.vue'),
-  },
-  {
-    path: '/encargos',
-    name: 'Encargos',
-    component: () => import('../views/Encargos.vue'),
   },
 ];
 

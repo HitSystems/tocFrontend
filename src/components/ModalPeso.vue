@@ -51,12 +51,14 @@
 <script>
 import { onMounted, computed, ref } from 'vue';
 import { useStore } from 'vuex';
-import axios from 'axios';
+import { useToast } from 'vue-toastification';
+import axios from "axios";
 
 export default {
   name: 'ModalPeso',
   setup() {
     const store = useStore();
+    const toast = useToast();
     const unidades = ref('0');
     const cesta = computed(() => store.state.Cesta.cesta);
     const infoArticulo = computed(() => store.state.ModalPeso);
@@ -82,6 +84,7 @@ export default {
     function eliminarTecla() {
       unidades.value = unidades.value.slice(0, -1);
     }
+
     function confirmar() {
       store.dispatch('ModalPeso/cerrarModal');
       axios.post('cestas/clickTeclaArticulo', {
@@ -96,7 +99,7 @@ export default {
         if (res2.data.error === false && res2.data.bloqueado === false) {
           store.dispatch('Cesta/setCestaAction', res2.data.cesta);
         } else {
-          console.log('Error en clickTeclaArticulo');
+          toast.error(res2.data.error);
         }
       });
       unidades.value = '0';

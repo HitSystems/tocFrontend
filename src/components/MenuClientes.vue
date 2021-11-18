@@ -42,11 +42,6 @@
                                      href="#" class="btn btn-primary btn-lg" style="width: 150px">
                                         Seleccionar
                                     </button>
-                                    <button
-                                     @click="infoPuntos(cliente.id)"
-                                     href="#" class="btn btn-info ms-2 btn-lg" style="width: 170px">
-                                        Info. puntos
-                                    </button>
                                  </td>
                               </tr>
                            </tbody>
@@ -64,10 +59,13 @@ import { computed, ref, onMounted } from 'vue';
 import { useStore } from 'vuex';
 import axios from 'axios';
 import { Modal } from 'bootstrap';
+import { useToast } from 'vue-toastification';
+import { socket } from '../sockets/socket';
 
 export default {
   name: 'MenuClientes',
   setup() {
+    const toast = useToast();
     const store = useStore();
     const GLOVO = store.getters['Clientes/getGlovo'];
     const DELIVEROO = store.getters['Clientes/getDeliveroo'];
@@ -82,19 +80,11 @@ export default {
          if (!res.data.error) {
             selectCliente(res.data.infoCliente);
          } else {
-            store.dispatch('setToastAction', {
-               tipo: 'DANGER',
-               mensaje: res.data.mensaje
-            });
-            store.dispatch('showToast');
+            toast.error(res.data.mensaje);
          }
       }).catch((err) => {
          console.log(err);
-         store.dispatch('setToastAction', {
-            tipo: 'DANGER',
-            mensaje: res.data.mensaje
-         });
-         store.dispatch('showToast');
+         toast.error(res.data.mensaje);
       }); 
     }
 
@@ -104,29 +94,33 @@ export default {
          if (!res.data.error) {
             selectCliente(res.data.infoCliente);
          } else {
-            store.dispatch('setToastAction', {
-               tipo: 'DANGER',
-               mensaje: res.data.mensaje
-            });
-            store.dispatch('showToast');
+            toast.error(res.data.mensaje);
          }
       }).catch((err) => {
          console.log(err);
-         store.dispatch('setToastAction', {
-            tipo: 'DANGER',
-            mensaje: res.data.mensaje
-         });
-         store.dispatch('showToast');
+         toast.error(res.data.mensaje);
       }); 
     }
 
-    function selectCliente(cliente) {
-      console.log("Entro aqui");
-      axios.post('clientes/comprobarVIP', { idClienteFinal: cliente.id }).then((res) => {
-         console.log("Lol ", res.data);
-         if (res.data.error === false) {
-            console.log('Será esta: ', res.data.info);
+   function nuevoCliente() {
+      toast.info('Deshabilitado temporalmente');
+   }
 
+   function reset() {
+      store.dispatch('setModoActual', 'NORMAL');
+      store.dispatch('Clientes/resetClienteActivo');
+      store.dispatch('Footer/resetMenuActivo');
+      axios.post('articulos/setEstadoTarifaVIP', { nuevoEstado: false }).then((res) => {
+         modalClientes.hide();
+         toast.info('Reset OK. Estado de cobro: NORMAL');
+      }).catch((err) => {
+         console.log(err);
+      });
+   }
+
+    function selectCliente(cliente) {
+      axios.post('clientes/comprobarVIP', { idClienteFinal: cliente.id }).then((res) => {
+         if (res.data.error === false) {
             /* SET PAGA EN TIENDA */
             if (res.data.info.pagaEnTienda == false) {
                cliente['pagaEnTienda'] = false;
@@ -137,6 +131,7 @@ export default {
                store.dispatch('Clientes/setInfoClienteVip', res.data.info.datosCliente);
                store.dispatch('setModoActual', 'VIP');
             } else {
+               cliente['puntos'] = res.data.info.puntos;
                store.dispatch('setModoActual', 'CLIENTE');
             }
 
@@ -145,26 +140,14 @@ export default {
             store.dispatch('Footer/setMenuActivo', 1);
 
             modalClientes.hide();
-            store.dispatch('setToastAction', {
-               tipo: 'SUCCESS',
-               mensaje: 'Cliente seleccionado'
-            });
-            store.dispatch('showToast');
+            toast.success('Cliente seleccionado');
          } else {
             console.log(res.data.mensaje);
-            store.dispatch('setToastAction', {
-               tipo: 'DANGER',
-               mensaje: 'Error. Comprobar consola.'
-            });
-            store.dispatch('showToast');
+            toast.error('Error. Comprobar consola');
          }
       }).catch((err) => {
          console.log(err);
-         store.dispatch('setToastAction', {
-            tipo: 'DANGER',
-            mensaje: 'Error. Comprobar consola 2.'
-         });
-         store.dispatch('showToast');
+         toast.error('Error. Comprobar consola 2');
       });
     }
 
@@ -178,7 +161,7 @@ export default {
     }
 
     function infoPuntos(id) {
-       console.log('Mostrar puntos del cliente: ', id);
+      socket.emit('consultarPuntos', { idClienteFinal: id });
     }
 
     onMounted(() => {
@@ -188,6 +171,8 @@ export default {
     });
 
     return {
+      nuevoCliente,
+      reset,
       infoPuntos,
       inputBusqueda,
       buscar,

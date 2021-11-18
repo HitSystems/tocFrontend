@@ -130,9 +130,6 @@
                     src="../assets/imagenes/img-3g-disabled.png"
                     alt="Cobrar con tarjeta" width="185">
                 </div>
-                <button class="col-md-4 text-center" data-bs-toggle="modal" data-bs-target="#modalEncargos">
-                  Encargos
-                </button>
             </div>
             <!-- <div class="row mt-2">
               TICKET RESTAURANTE DESHABILITADO
@@ -201,14 +198,12 @@
       </div>
     </div>
   </div>
-  <EncargosComponent />
 </template>
 
 <script>
 import axios from 'axios';
 import { useStore } from 'vuex';
 import { useRoute } from 'vue-router';
-import EncargosComponent from '@/components/EncargosComponent.vue'; // @ is an alias to /src
 
 import {
   computed,
@@ -216,16 +211,14 @@ import {
   onMounted,
   watchEffect,
 } from 'vue';
-
+import { useToast } from "vue-toastification";
 import router from '../router/index';
 import { socket } from '../sockets/socket';
 
 export default {
   name: 'CobroComponent',
-  components: {
-    EncargosComponent,
-  },
   setup() {
+    const toast = useToast();
     const route = useRoute();
     const store = useStore();
     const { total } = route.params;
@@ -244,7 +237,7 @@ export default {
     const totalTkrs = ref(0);
     const cuenta = ref(0);
     const arrayFichados = ref([]);
-    const esperando = ref(false);
+    const esperando = computed(() => store.state.esperandoDatafono); // ref(false);
     /* eslint no-underscore-dangle: ["error", { "allow": ["_id"] }] */
     const cestaID = computed(() => store.state.Cesta.cesta._id);
     function reset() {
@@ -252,10 +245,6 @@ export default {
       cuentaAsistenteTecladoV.value = 0;
       totalTkrs.value = 0;
       cuenta.value = 0;
-    }
-
-    function encargos() {
-      store.dispatch('Encargos/abrirModal', { idArticulo: 2, idBoton: 1, precioConIva: 0 });
     }
 
     function agregarTecla(x) {
@@ -345,7 +334,7 @@ export default {
     });
 
     function setEsperando(payload) {
-      esperando.value = payload;
+      store.dispatch('setEsperandoDatafono', payload);
     }
 
     function cobrar() {
@@ -367,16 +356,19 @@ export default {
                 store.dispatch('setModoActual', 'NORMAL');
                 store.dispatch('Clientes/resetClienteActivo');
                 store.dispatch('Footer/resetMenuActivo');
+                try {
+                  axios.post('impresora/abrirCajon');
+                } catch(err) {
+                  toast.error('No se ha podido abrir el cajón');
+                }
+                toast.success('Ticket OK');
                 router.push('/');
               } else {
-                store.dispatch('setToastAction', {
-                  tipo: 'DANGER',
-                  mensaje: 'Error al insertar el ticket.',
-                });
-                store.dispatch('showToast');
+                toast.error('Error al insertar el ticket');
               }
             }).catch((err) => {
               console.log(err);
+              toast.error('Error');
             });
           }
 
@@ -391,16 +383,13 @@ export default {
                 store.dispatch('setModoActual', 'NORMAL');
                 store.dispatch('Clientes/resetClienteActivo');
                 store.dispatch('Footer/resetMenuActivo');
-                router.push('/');
+                router.push({ name: 'Home', params: { tipoToast: 'success', mensajeToast: 'Ticket creado' } });
               } else {
-                store.dispatch('setToastAction', {
-                  tipo: 'DANGER',
-                  mensaje: 'Error al insertar el ticket.',
-                });
-                store.dispatch('showToast');
+                toast.error('Error al insertar el ticket');
               }
             }).catch((err) => {
               console.log(err);
+              toast.error('Error');
             });
           }
 
@@ -422,26 +411,10 @@ export default {
         // vueToast.abrir('danger', 'Ya existe una operación en curso');
       }
     }
-    socket.on('resDatafono', (data) => {
-      setEsperando(false);
-      if (data.error == false) {
-        store.dispatch('setModoActual', 'NORMAL');
-        store.dispatch('Clientes/resetClienteActivo');
-        store.dispatch('Footer/resetMenuActivo');
-        router.push('/');
-      } else {
-        store.dispatch('setToastAction', {
-          tipo: 'DANGER',
-          mensaje: data.mensaje,
-        });
-        store.dispatch('showToast');
-      }
-    });
 
     function test() {
       console.log('test vacío');
     }
-
     onMounted(() => {
       // socket.on('resDatafono', (data) => {
       //   console.log(data);
@@ -496,7 +469,6 @@ export default {
       volver,
       cobrar,
       esperando,
-      encargos,
     };
   },
 };

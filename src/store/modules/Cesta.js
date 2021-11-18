@@ -14,7 +14,7 @@ export default {
     setActivoMutation(state, payload) {
       state.activo = payload;
     },
-    setIdAction(state, payload) {
+    setIdMutation(state, payload) {
       state.cesta._id = payload;
     }
   },
@@ -30,8 +30,8 @@ export default {
     setActivoAction({ commit }, activo) {
       commit('setActivoMutation', activo);
     },
-    setIdAction({ commit }, id) {
-      commit('setIdAction', id)
+    setIdAction({ commit }, idCesta) {
+      commit('setIdMutation', idCesta);
     }
   },
 };

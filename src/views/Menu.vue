@@ -39,6 +39,13 @@
             <strong class="mb-1">Entregas</strong>
           </div>
         </button>
+        <router-link
+        to="/menuTecnico"
+        class="list-group-item list-group-item-action py-3 lh-tight">
+          <div class="d-flex w-100 align-items-center justify-content-between">
+            <strong class="mb-1">Técnico</strong>
+          </div>
+        </router-link>
       </div>
     </div>
     </div>
@@ -46,22 +53,36 @@
       <router-view></router-view>
     </div>
   </div>
-  <ToastComponent/>
 </template>
 <script>
 import { computed } from 'vue';
 import { useStore } from 'vuex';
 import axios from 'axios';
-import ToastComponent from '@/components/Toast.vue';
 import router from '../router/index';
 import { tocGame } from '../services/tocGame';
 
 export default {
   name: 'Menu',
-  setup() {
+  props: {
+    tipoToast: {
+      required: false
+    },
+    mensajeToast: {
+      required: false
+    }
+  },
+  setup(props) {
     const store = useStore();
     const isHidden = computed(() => store.state.Menu.hidden);
     const params = tocGame.getParametros();
+
+    if (props.tipoToast != undefined && props.mensajeToast != undefined) {
+      toast(props.mensajeToast, { type: props.tipoToast })
+      console.log('Deberían abrirse la ptm');
+    } else {
+      console.log('No están definidos. INFO TOAST');
+      console.log(props.tipoToast, props.mensajeToast);
+    }
 
     function quitarActivoTicket() {
       store.dispatch('Ticket/setActivoAction', null);
@@ -116,9 +137,6 @@ export default {
       imprimirEntregas,
       goTo,
     };
-  },
-  components: {
-    ToastComponent,
   },
 };
 </script>
