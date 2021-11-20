@@ -91,7 +91,7 @@
                 </div>
             </div>
         </div>
-        <div class="modal-footer position-fixed mt-1 mx-auto">
+        <div class="modal-footer mt-1 mx-auto">
             <button type="button" class="btn btn-danger btn-lg" @click="cerrarModal()">Cerrar</button>
             <button type="button" class="btn btn-secondary btn-lg" @click="borrarLetra()">Borrar</button>
             <button type="button" class="btn btn-primary btn-lg" @click="crearCesta()">Crear</button>
