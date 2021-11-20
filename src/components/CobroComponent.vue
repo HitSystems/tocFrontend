@@ -353,6 +353,7 @@ export default {
               idCliente: infoCliente
             }).then((res) => {
               if (!res.data.error) {
+                store.dispatch('Cesta/setIdAction', -1);
                 store.dispatch('setModoActual', 'NORMAL');
                 store.dispatch('Clientes/resetClienteActivo');
                 store.dispatch('Footer/resetMenuActivo');
@@ -380,6 +381,7 @@ export default {
               idCliente: infoCliente
             }).then((res) => {
               if (!res.data.error) {
+                store.dispatch('Cesta/setIdAction', -1);
                 store.dispatch('setModoActual', 'NORMAL');
                 store.dispatch('Clientes/resetClienteActivo');
                 store.dispatch('Footer/resetMenuActivo');

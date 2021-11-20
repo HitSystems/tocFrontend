@@ -23,6 +23,7 @@ socket.on('resConsultaPuntos', (data) => {
 socket.on('resDatafono', (data) => {
     store.dispatch('setEsperandoDatafono', false);
     if (data.error == false) {
+      store.dispatch('Cesta/setIdAction', -1);
       store.dispatch('setModoActual', 'NORMAL');
       store.dispatch('Clientes/resetClienteActivo');
       store.dispatch('Footer/resetMenuActivo');

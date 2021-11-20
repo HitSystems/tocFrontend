@@ -455,28 +455,28 @@ export default {
         console.log('Estoy bloqueado');
       }
     }
-    function clickTecla(objListadoTeclas, esAPeso = false) {
-      if (!esAPeso) {
-            if (!esAPeso) { // TIPO NORMAL
-              axios.post('cestas/clickTeclaArticulo', {
-                idArticulo: objListadoTeclas.idArticle,
-                idBoton: objListadoTeclas.idBoton,
-                peso: esAPeso,
-                infoPeso: null,
-                idCesta: cesta.value._id,
-                unidades: (store.getters['getUnidades'] == 0) ? (1):(store.getters['getUnidades'])
-              }).then((res2) => {
-                if (res2.data.error === false && res2.data.bloqueado === false) {
-                  store.dispatch('resetUnidades');
-                  store.dispatch('Cesta/setCestaAction', res2.data.cesta);
-                } else {
-                  console.log('Error en clickTeclaArticulo');
-                }
-              });
-            } else { // TIPO A PESO
-            }
-      }
+
+    function clickTecla(objListadoTeclas) {
+      axios.post('cestas/clickTeclaArticulo', {
+        idArticulo: objListadoTeclas.idArticle,
+        idBoton: objListadoTeclas.idBoton,
+        peso: false,
+        infoPeso: null,
+        idCesta: cesta.value._id,
+        unidades: (store.getters['getUnidades'] == 0) ? (1):(store.getters['getUnidades'])
+      }).then((res2) => {
+        if (res2.data.error === false && res2.data.bloqueado === false) {
+          store.dispatch('resetUnidades');
+          store.dispatch('Cesta/setCestaAction', res2.data.cesta);
+        } else {
+          console.log('Error en clickTeclaArticulo');
+        }
+      }).catch((err) => {
+        console.log(err);
+        toast.error('Error. Comprobar consola');
+      });
     }
+
     resetTeclado();
     axios.post('/menus/getMenus').then((res) => {
       if (!res.data.bloqueado) {

@@ -71,7 +71,7 @@ export default {
       return 0;
     });
     const getPrecio = computed(() => ((Number(unidades.value) / 1000)
-    * infoArticulo.value.precioConIva).toFixed(2));
+    * infoArticulo.value.precioConIva));
     // function abrirModal(idArticulo: number, idBoton: number){
     //   infoArticulo.value = ipcRenderer.sendSync('get-info-articulo', idArticulo);
     //   idBoton = idBoton;
@@ -101,6 +101,9 @@ export default {
         } else {
           toast.error(res2.data.error);
         }
+      }).catch((err) => {
+        console.log(err);
+        toast.error('Error. Comprobar consola');
       });
       unidades.value = '0';
     }
