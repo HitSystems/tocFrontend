@@ -48,7 +48,7 @@
 
     </div>
 
-    <div v-if="menuActivo === 1 && infoCliente.id != DELIVEROO && infoCliente.id != GLOVO" class="col text-center"
+    <div v-if="menuActivo === 1 && infoCliente.id != DELIVEROO && infoCliente.id != GLOVO && infoCliente.id != UBER"  class="col text-center"
     :class="{
       tipoNormal: modoActual === 'NORMAL',
       tipoDevolucion: modoActual === 'DEVOLUCION',
@@ -78,6 +78,12 @@
     <div class="col text-center" v-if="infoCliente.id === GLOVO && menuActivo === 1"
     style="max-width: 245px; max-height: 196px;">
       <img src="../assets/logoGlovo.png" width="200" alt="Logo Glovo">
+    </div>
+
+    <!-- VISTA UBER -->
+    <div class="col text-center" v-if="infoCliente.id === UBER && menuActivo === 1"
+    style="max-width: 245px; max-height: 196px;">
+      <img src="../assets/logoUber.png" width="200" alt="Logo Uber">
     </div>
 
     <div class="col" style="max-width:50px"
@@ -236,6 +242,7 @@ export default {
     const infoCliente = computed(() => store.state.Clientes.infoCliente);
     const GLOVO = store.getters['Clientes/getGlovo'];
     const DELIVEROO = store.getters['Clientes/getDeliveroo'];
+    const UBER = store.getters['Clientes/getUber'];
 
     let inicioMagic = null;
     let finalMagic = null;
@@ -279,7 +286,9 @@ export default {
     }
 
     function productoRegalable(idArticulo) {
-      const arrayRegalables = [1098, 4631, 312, 99, 77, 73, 75];
+      const arrayRegalables = [
+        8641, 8654, 8640, 8675, 99, 315, 314, 312, 5603
+      ];
       for (let i = 0; i < arrayRegalables.length; i++) {
         if (arrayRegalables[i] == idArticulo) {
           return true;
@@ -531,6 +540,7 @@ export default {
       buscarProducto,
       GLOVO,
       DELIVEROO,
+      UBER,
       thisIsCatalunya,
       infoCliente,
       modoActual,
