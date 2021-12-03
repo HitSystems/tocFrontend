@@ -7,6 +7,9 @@
                <button type="button" class="btn btn-warning btn-lg mr-0" @click="selectGlovo()">
                    Glovo
                 </button>
+               <button type="button" class="btn btn-success btn-lg mr-0" @click="selectUber()">
+                   Uber
+                </button>
                <button type="button" class="btn btn-info btn-lg mr-0" @click="selectDeliveroo()">
                    Deliveroo
                 </button>
@@ -69,6 +72,7 @@ export default {
     const store = useStore();
     const GLOVO = store.getters['Clientes/getGlovo'];
     const DELIVEROO = store.getters['Clientes/getDeliveroo'];
+    const UBER = store.getters['Clientes/getUber'];
     const nombre = 'Santy';
     const inputBusqueda = ref('');
     const clienteActivo = computed(() => store.state.Clientes.clienteActivo);
@@ -91,6 +95,19 @@ export default {
     function selectDeliveroo() {
        console.log("DELIVEROO: ", DELIVEROO);
       axios.post('clientes/getClienteByID', { idCliente: DELIVEROO }).then((res) => {
+         if (!res.data.error) {
+            selectCliente(res.data.infoCliente);
+         } else {
+            toast.error(res.data.mensaje);
+         }
+      }).catch((err) => {
+         console.log(err);
+         toast.error(res.data.mensaje);
+      }); 
+    }
+    function selectUber() {
+       console.log("UBER: ", DELIVEROO);
+      axios.post('clientes/getClienteByID', { idCliente: UBER }).then((res) => {
          if (!res.data.error) {
             selectCliente(res.data.infoCliente);
          } else {
@@ -180,6 +197,7 @@ export default {
       arrayClientes,
       selectGlovo,
       selectDeliveroo,
+      selectUber,
       selectCliente,
       clienteActivo,
     };
