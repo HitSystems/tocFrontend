@@ -131,15 +131,14 @@
                     alt="Cobrar con tarjeta" width="185">
                 </div>
             </div>
-            <!-- <div class="row mt-2">
-              TICKET RESTAURANTE DESHABILITADO
+            <div class="row mt-2">
               <div class="col text-center">
                 <img
                   data-bs-toggle="modal" data-bs-target="#exampleModal"
                   src="../assets/imagenes/img-restaurant.png"
                   alt="tkrs" width="185">
               </div>
-            </div> -->
+            </div>
             <div class="row mt-2" :class="{'datafonoEsperando': !esperando}">
               <div class="col text-center">
                 <img src="../assets/imagenes/loading.gif"
@@ -341,7 +340,29 @@ export default {
       if (!esperando.value) {
         if (totalTkrs.value > 0) { /* Ticket restaurant activo */
           setEsperando(true);
-          axios.post('');
+          const data = {
+            total: Number(total),
+            totalTkrs: totalTkrs.value,
+            idCesta: cestaID.value,
+            idCliente: infoCliente,
+          }
+          axios.post('tickets/crearTicketTKRS', data).then((res) => {
+            if(!res.data.error) {
+              reset();
+              try {
+                axios.post('impresora/abrirCajon');
+              } catch (err) {
+                toast.error('No se ha podido abrir el cajón.');
+              }
+              toast.success('Ticket OK');
+              router.push('/');
+            } else {
+              toast.error('Error al insertar el ticket.');
+            }
+          }).catch((err) => {
+            console.log(err);
+            toast.error('Error');
+          });
           // toc.crearTicket(this.metodoPagoActivo, Number(vueCesta.getTotalEstatico()),
           // {tkrs: true, totalTkrs: this.totalTkrs, tipoPago: this.metodoPagoActivo});
         } else { // Sin ticket restaurant (normal)
@@ -353,10 +374,7 @@ export default {
               idCliente: infoCliente
             }).then((res) => {
               if (!res.data.error) {
-                store.dispatch('Cesta/setIdAction', -1);
-                store.dispatch('setModoActual', 'NORMAL');
-                store.dispatch('Clientes/resetClienteActivo');
-                store.dispatch('Footer/resetMenuActivo');
+                reset();
                 try {
                   axios.post('impresora/abrirCajon');
                 } catch(err) {
@@ -381,10 +399,7 @@ export default {
               idCliente: infoCliente
             }).then((res) => {
               if (!res.data.error) {
-                store.dispatch('Cesta/setIdAction', -1);
-                store.dispatch('setModoActual', 'NORMAL');
-                store.dispatch('Clientes/resetClienteActivo');
-                store.dispatch('Footer/resetMenuActivo');
+                reset();
                 router.push({ name: 'Home', params: { tipoToast: 'success', mensajeToast: 'Ticket creado' } });
               } else {
                 toast.error('Error al insertar el ticket');
@@ -412,6 +427,13 @@ export default {
       } else {
         // vueToast.abrir('danger', 'Ya existe una operación en curso');
       }
+    }
+
+    function reset() {
+      store.dispatch('Cesta/setIdAction', -1);
+      store.dispatch('setModoActual', 'NORMAL');
+      store.dispatch('Clientes/resetClienteActivo');
+      store.dispatch('Footer/resetMenuActivo');
     }
 
     function test() {
