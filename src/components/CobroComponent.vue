@@ -356,7 +356,8 @@ export default {
               }
               toast.success('Ticket OK');
               router.push('/');
-            } else {
+              setEsperando(false);
+              } else {
               toast.error('Error al insertar el ticket.');
             }
           }).catch((err) => {
