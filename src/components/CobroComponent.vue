@@ -339,7 +339,6 @@ export default {
     function cobrar() {
       if (!esperando.value) {
         if (totalTkrs.value > 0) { /* Ticket restaurant activo */
-          setEsperando(true);
           const data = {
             total: Number(total),
             totalTkrs: totalTkrs.value,
@@ -356,7 +355,6 @@ export default {
               }
               toast.success('Ticket OK');
               router.push('/');
-              setEsperando(false);
               } else {
               toast.error('Error al insertar el ticket.');
             }
