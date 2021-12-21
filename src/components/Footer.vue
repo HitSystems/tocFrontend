@@ -213,7 +213,7 @@
     </div>
   </div>
   <div style="position:fixed; bottom: 2px; left: 2px;">
-    <span style="font-weight: bold">v{{tocVersion}}</span>
+    <span style="font-weight: bold">(v{{tocVersion}}) ({{nombreTienda}})</span>
   </div>
 </template>
 
@@ -234,6 +234,7 @@ export default {
     const toast = useToast();
     const store = useStore();
     const tocVersion = ref('');
+    const nombreTienda = ref('');
     const cesta = computed(() => store.state.Cesta.cesta);
     const activo = computed(() => store.state.Cesta.activo);
     const notificaciones = computed(() => store.state.Notificaciones.cantidad);
@@ -460,9 +461,10 @@ export default {
 
     onMounted(() => {
       /* Get toc version from package.json */
-      axios.get('version/tocGame').then((res) => {
+      axios.get('getInfo/tocGame').then((res) => {
         if (res.data != undefined || res.data != null) {
-          tocVersion.value = res.data;
+          tocVersion.value = res.data.version;
+          nombreTienda.value = res.data.nombreTienda;
         }
       }).catch((err) => {
         console.log(err);
@@ -548,6 +550,7 @@ export default {
 
     return {
       tocVersion,
+      nombreTienda,
       regalar,
       agregarTecla,
       borrarDigitoUnidades,
