@@ -212,6 +212,9 @@
       </div>
     </div>
   </div>
+  <div style="position:fixed; bottom: 2px; left: 2px;">
+    <span style="font-weight: bold">v{{tocVersion}}</span>
+  </div>
 </template>
 
 <script>
@@ -230,6 +233,7 @@ export default {
   setup() {
     const toast = useToast();
     const store = useStore();
+    const tocVersion = ref('');
     const cesta = computed(() => store.state.Cesta.cesta);
     const activo = computed(() => store.state.Cesta.activo);
     const notificaciones = computed(() => store.state.Notificaciones.cantidad);
@@ -455,6 +459,16 @@ export default {
     }
 
     onMounted(() => {
+      /* Get toc version from package.json */
+      axios.get('version/tocGame').then((res) => {
+        if (res.data != undefined || res.data != null) {
+          tocVersion.value = res.data;
+        }
+      }).catch((err) => {
+        console.log(err);
+        toast.error('Error en getVersion catch');
+      });
+
       /* SET MODO ACTUAL */
       if (modoActual.value == 'DEVOLUCION' || modoActual.value == 'CLIENTE') {
         store.dispatch('Footer/setMenuActivo', 1);
@@ -533,6 +547,7 @@ export default {
     }
 
     return {
+      tocVersion,
       regalar,
       agregarTecla,
       borrarDigitoUnidades,

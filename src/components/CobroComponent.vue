@@ -410,13 +410,31 @@ export default {
           }
 
           if (metodoPagoActivo.value === 'TARJETA') {
-            console.log(cestaID.value);
-            // axios.post('enviarAlDatafono', {
-            //   total: Number(total),
-            //   idCesta: cestaID.value,
-            // });
-            socket.emit('enviarAlDatafono', { total: Number(total), idCesta: cestaID.value, idClienteFinal: infoCliente });
-            setEsperando(true);
+            axios.post('parametros/getParametros').then((resParams) => {
+              if (resParams.data.parametros != undefined || resParams.data.parametros != null) {
+                if (resParams.data.parametros.tipoDatafono == 'CLEARONE') {
+                  socket.emit('enviarAlDatafono', { total: Number(total), idCesta: cestaID.value, idClienteFinal: infoCliente });
+                  setEsperando(true);
+                } else if (resParams.data.parametros.tipoDatafono == 'PAYTEF'){
+                  setEsperando(true);
+                  axios.post('paytef/iniciarTransaccion', { cantidad: Number(total), idCesta: cestaID.value, idClienteFinal: infoCliente }).then((resPaytef) => {
+                    if (resPaytef.data.error == true) {
+                      toast.error(resPaytef.data.mensaje);
+                    } else {
+                      socket.emit('polling', { cantidad: Number(total), idCesta: cestaID.value, idClienteFinal: infoCliente });
+                    }
+                  }).catch((err) => {
+                    console.log(err);
+                    toast.error('Error POST iniciarTransaccion');
+                  });
+                }
+              } else {
+                toast.error('Datáfono no definido en los parámetros');
+              }
+            }).catch((err) => {
+              console.log(err);
+              toast.error('Error de getParametros datáfono');
+            });
           }
 
           // toc.crearTicket(this.metodoPagoActivo, Number(vueCesta.getTotalEstatico()),
