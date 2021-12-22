@@ -12,6 +12,11 @@
       </div>
       <div class="row text-center mt-2">
           <div class="col">
+            <button class="btn btn-primary buttonSizeTecnico" @click="actualizarTeclados()">Actualizar teclado</button>
+          </div>
+      </div>
+      <div class="row text-center mt-2">
+          <div class="col">
             <button class="btn btn-primary buttonSizeTecnico" data-bs-toggle="modal" data-bs-target="#modalConfigImpresora">Config. VID y PID impresora</button>
           </div>
       </div>
@@ -78,6 +83,19 @@ export default {
             router.push('/menu/caja');
         }
 
+        function actualizarTeclados() {
+            axios.post('teclado/actualizarTeclado').then((res) => {
+                if (res.data.error == false) {
+                    toast.success("OK");
+                } else {
+                    toast.error(res.data.mensaje)
+                }
+            }).catch((err) => {
+                console.log(err);
+                toast.error('Error catch');
+            });
+        }
+
         function guardarCambiosImpresora() {
             axios.post('parametros/vidAndPid', { vid: vid.value, pid: pid.value }).then((res) => {
                 if (res.data.error == false) {
@@ -124,7 +142,8 @@ export default {
             pid,
             descargarTicketInfo,
             volver,
-            descargarClientesFinales
+            descargarClientesFinales,
+            actualizarTeclados
         };     
     },
 }
