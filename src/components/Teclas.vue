@@ -1,23 +1,30 @@
 <template>
-  <div class="row p-2" id="menusColores">
-    <template v-if="listaMenus.length <= 11">
-      <div v-for="(item, index) of listaMenus" :key="item.nomMenu" @click="clickMenu(index)" class="col colJuntitasMenus menus" style="padding-left: 4px;">
-        <button class="btn btn-secondary w-100 menus menusColorIvan colorMenus" v-bind:class="[{'activo' : esActivo(index)}]">
-          {{item.nomMenu}}
+  <div class="row pb-1" id="menusColores">
+      <div v-for='(item, index) of listaSubmenus' :key='index' @click='clickSubmenu(item.tag)' class='col colJuntitas menus' styled='padding-left: 4px;'>
+        <button class='btn btn-secondary w-100 menus menusColorIvan colorMenus' v-bind:class="[{'activo': submenuEsActivo(item.tag)}]">
+          {{item.nombre}}
         </button>
       </div>
-    </template>
-    <template v-else class="scrollmenu">
-      <div class="scrollmenu" style="-webkit-transform: translateZ(0); ">
-        <div class="col colJuntitasMenus menus">
-          <button v-for="(item, index) of listaMenus"
-          :key="index" style="width: 200px"
-          class="btn btn-secondary menus menusColorIvan ms-2"
-          v-bind:class="[{'activo' : esActivo(index)}, 'colorMenus']"
-          @click="clickMenu(index)">{{item.nomMenu}}</button>
+  </div>
+  <div class="row m-0 mb-3" id="menusColores">
+      <template v-if="listaMenus.length <= 11">
+        <div v-for="(item, index) of listaMenus" :key="item.nomMenu" @click="clickMenu(index)" class="col colJuntitasMenus menus" style="padding-left: 4px;">
+          <button class="btn btn-secondary w-100 subMenus menusColorIvan colorMenus" v-bind:class="[{'activo' : esActivo(index)}]">
+            {{item.nomMenu}}
+          </button>
         </div>
-      </div>
-    </template>
+      </template>
+      <template v-else class="scrollmenu">
+        <div class="scrollmenu" style="-webkit-transform: translateZ(0); ">
+          <div class="col colJuntitasMenus menus">
+            <button v-for="(item, index) of listaMenus"
+            :key="index" style="width: 200px"
+            class="btn btn-secondary menus menusColorIvan ms-2"
+            v-bind:class="[{'activo' : esActivo(index)}, 'colorMenus']"
+            @click="clickMenu(index)">{{item.nomMenu}}</button>
+          </div>
+        </div>
+      </template>
   </div>
   <div>
     <div class="row" v-for="index in 6" :key="index">
@@ -83,6 +90,10 @@ export default {
     const cesta = computed(() => store.state.Cesta.cesta);
     const cajaAbierta = computed(() => store.state.Caja.cajaAbierta);
     const listaMenus = ref([{ nomMenu: '' }]);
+    const listaSubmenus = ref([{ nombre: '', tag: '' }]);
+    const dobleMenu = ref(false);
+    const showBackButton = ref(false);
+    let clickBack = false;
     let clickMenuBloqueado = false;
     const listaPrecios = ref([{
       _id: -1,
@@ -96,6 +107,7 @@ export default {
     ]);
     const listadoTeclas = ref([]);
     let menuActivo = 0;
+    let subMenuActivo = '01';
     const botonesPrecio = false;
     const unidadesAplicar = 1;
     const edadState = computed(() => store.state.modalPeso.edadState);
@@ -114,6 +126,9 @@ export default {
         return true;
       }
       return false;
+    }
+    function submenuEsActivo(x) {
+      return x === subMenuActivo;
     }
     function modalesSumable(articuloAPeso, idBoton) {
       axios.post('articulos/getArticulo', { idArticulo: articuloAPeso.idArticle }).then((res) => {
@@ -438,6 +453,7 @@ export default {
     }
     function clickMenu(index) {
       if (!clickMenuBloqueado) {
+        console.log('Hola holita')
         clickMenuBloqueado = true;
         axios.post('/menus/clickMenu', { nombreMenu: listaMenus.value[index].nomMenu }).then((res) => {
           if (!res.data.bloqueado) {
@@ -454,6 +470,27 @@ export default {
       } else {
         console.log('Estoy bloqueado');
       }
+    }
+
+    function clickSubmenu(tag) {
+      axios.post('/doble-menus/clickMenu', { tag }).then((res) => {
+        if(!res.data.bloqueado) {
+          console.log(res)
+          listaMenus.value = res.data.resultado;
+          subMenuActivo = tag;
+          clickMenuBloqueado = false;
+          clickMenu(0);
+          dobleMenu.value = false;
+        } else {
+          console.log('Kachau');
+        }
+      })
+    }
+
+    function goBackSubmenus() {
+      clickBack = true;
+      console.log("🚀 ~ file: Teclas.vue ~ line 494 ~ goBackSubmenus ~ clickBack", clickBack)
+      getSubmenus(true);
     }
 
     function clickTecla(objListadoTeclas) {
@@ -478,14 +515,42 @@ export default {
     }
 
     resetTeclado();
-    axios.post('/menus/getMenus').then((res) => {
-      if (!res.data.bloqueado) {
-        listaMenus.value = res.data.resultado;
-        clickMenu(0);
-      } else {
-        console.log('EN ESTE MOMENTO NO ES POSIBLE CARGAR EL TECLADO');
-      }
-    });
+    if(!showBackButton.value) {
+      axios.post('/menus/getMenus').then((res) => {
+        if (!res.data.bloqueado) {
+          listaMenus.value = res.data.resultado;
+          clickMenu(0);
+        } else {
+          console.log('EN ESTE MOMENTO NO ES POSIBLE CARGAR EL TECLADO');
+        }
+      });
+    }
+    function getSubmenus(backButton = false) {
+      axios.post('/doble-menus/getMenus').then((res) => {
+        if(!res.data.bloqueado) {
+          if(res.data.resultado.length > 0) {
+            listaSubmenus.value = res.data.resultado;
+            if(!backButton) clickSubmenu(res.data.resultado[0].tag);
+            else dobleMenu.value = true;
+            showBackButton.value = true;
+            if(!clickBack) {
+              axios.post('/menus/getSubmenus', { tag: res.data.resultado[0].tag }).then((res2) => {
+                if(!res2.data.bloqueado) {
+                  listaMenus.value = res2.data.resultado;
+                  clickMenuBloqueado = false;
+                  clickMenu(0);
+                } else {
+                  console.log('F TECLADO');
+                }
+              });
+            } 
+          } else {
+            dobleMenu.value = false;
+          }
+        }
+      })
+    }
+    getSubmenus();
 
     onMounted(() => {
       document.onselectstart = function(){ return false; }
@@ -518,6 +583,12 @@ export default {
       clickTecla,
       mostrarInfoVisor,
       modalesSumable,
+      dobleMenu,
+      listaSubmenus,
+      clickSubmenu,
+      submenuEsActivo,
+      showBackButton,
+      goBackSubmenus,
     };
     /* FINAL SETUP */
   },
@@ -570,7 +641,10 @@ export default {
     font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
 }
 .menus {
-    height: 70px;
+    height: 35px;
+}
+.subMenus {
+  height: 50px;
 }
 .colorMenus {
     background-color: #d45600;

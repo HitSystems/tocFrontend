@@ -120,7 +120,7 @@ export default {
         if (!res.data.error) {
           primeraParte.value = false;
           segundaParte.value = true;
-          const res2 = await axios.post('instalador/descargarTodo');
+          const res2 = await axios.post('/instalador/descargarTodo');
           if (res2.data.error === false) {
             router.push('/');
             esperando.value = false;
