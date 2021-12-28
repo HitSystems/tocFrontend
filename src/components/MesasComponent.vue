@@ -1,60 +1,67 @@
 <template>
     <div class="container-mesas">
-        <div v-for="(item, index) in arrayCestas" v-bind:key="index" class="row mt-3">
-            <div v-if="existePosicion(index*4+ 0)" class='col-md-3 text-center'>
+        <!--<div v-for="(item, index) in arrayCestas" v-bind:key="index" class="row mt-3">
+            <div v-if="existePosicion(index*10+ 0)" class='col-md-3 text-center'>
                 <div class="card cestaActiva mb-3" style="max-width: 20rem;">
-                    <div class="card-header titleStyle">{{arrayCestas[index*4].nombreCesta}}</div>
+                    <div class="card-header titleStyle">{{arrayCestas[index*10].nombreCesta}}</div>
                     <div class="card-body">
-                        <h5 class="card-title">{{getTotalPosicion(index*4+ 0)}} €</h5>
+                        <h5 class="card-title">{{getTotalPosicion(index*10+ 0)}} €</h5>
                         <div class="pt-2">
-                            <button @click="seleccionarCesta(index*4+ 0)" class="btn btn-primary sizeBotones">Abrir</button>
-                            <button @click="borrarCesta(index*4)" class="btn btn-danger ms-2 sizeBotones">Borrar</button>
+                            <button @click="seleccionarCesta(index*10+ 0)" class="btn btn-primary sizeBotones">Abrir</button>
+                            <button @click="borrarCesta(index*10)" class="btn btn-danger ms-2 sizeBotones">Borrar</button>
                         </div>
                     </div>
                 </div>
             </div>
-            <div v-if="existePosicion(index*4+ 1)" class='col-md-3 text-center'>
+            <div v-if="existePosicion(index*10+ 1)" class='col-md-3 text-center'>
                 <div class="card cestaActiva mb-3" style="max-width: 20rem;">
-                    <div class="card-header titleStyle">{{arrayCestas[index*4+ 1].nombreCesta}}</div>
+                    <div class="card-header titleStyle">{{arrayCestas[index*10+ 1].nombreCesta}}</div>
                     <div class="card-body">
-                        <h5 class="card-title">{{getTotalPosicion(index*4+ 1)}} €</h5>
+                        <h5 class="card-title">{{getTotalPosicion(index*10+ 1)}} €</h5>
                         <div class="pt-2">
-                            <button @click="seleccionarCesta(index*4+ 1)" class="btn btn-primary sizeBotones">Abrir</button>
-                            <button @click="borrarCesta(index*4+ 1)" class="btn btn-danger ms-2 sizeBotones">Borrar</button>
+                            <button @click="seleccionarCesta(index*10+ 1)" class="btn btn-primary sizeBotones">Abrir</button>
+                            <button @click="borrarCesta(index*10+ 1)" class="btn btn-danger ms-2 sizeBotones">Borrar</button>
                         </div>
                     </div>
                 </div>
             </div>
-            <div v-if="existePosicion(index*4+ 2)" class='col-md-3 text-center'>
+            <div v-if="existePosicion(index*10+ 2)" class='col-md-3 text-center'>
                 <div class="card cestaActiva mb-3" style="max-width: 20rem;">
-                    <div class="card-header titleStyle">{{arrayCestas[index*4+ 2].nombreCesta}}</div>
+                    <div class="card-header titleStyle">{{arrayCestas[index*10+ 2].nombreCesta}}</div>
                     <div class="card-body">
-                        <h5 class="card-title">{{getTotalPosicion(index*4+ 2)}} €</h5>
+                        <h5 class="card-title">{{getTotalPosicion(index*10+ 2)}} €</h5>
                         <div class="pt-2">
-                            <button @click="seleccionarCesta(index*4+ 2)" class="btn btn-primary sizeBotones">Abrir</button>
-                            <button @click="borrarCesta(index*4+ 2)" class="btn btn-danger ms-2 sizeBotones">Borrar</button>
+                            <button @click="seleccionarCesta(index*10+ 2)" class="btn btn-primary sizeBotones">Abrir</button>
+                            <button @click="borrarCesta(index*10+ 2)" class="btn btn-danger ms-2 sizeBotones">Borrar</button>
                         </div>
                     </div>
                 </div>
             </div>
-            <div v-if="existePosicion(index*4+ 3)" class='col-md-3 text-center'>
+            <div v-if="existePosicion(index*10+ 3)" class='col-md-3 text-center'>
                 <div class="card cestaActiva mb-3" style="max-width: 20rem;">
-                    <div class="card-header titleStyle">{{arrayCestas[index*4+ 3].nombreCesta}}</div>
+                    <div class="card-header titleStyle">{{arrayCestas[index*10+ 3].nombreCesta}}</div>
                     <div class="card-body">
-                        <h5 class="card-title">{{getTotalPosicion(index*4+ 3)}} €</h5>
+                        <h5 class="card-title">{{getTotalPosicion(index*10+ 3)}} €</h5>
                         <div class="pt-2">
-                            <button @click="seleccionarCesta(index*4+ 3)" class="btn btn-primary sizeBotones">Abrir</button>
-                            <button @click="borrarCesta(index*4+ 3)" class="btn btn-danger ms-2 sizeBotones">Borrar</button>
+                            <button @click="seleccionarCesta(index*10+ 3)" class="btn btn-primary sizeBotones">Abrir</button>
+                            <button @click="borrarCesta(index*10+ 3)" class="btn btn-danger ms-2 sizeBotones">Borrar</button>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-
+        </div>-->
+        <div v-for="i in 10" :key='i' class='row mt-1'>
+            <div v-for='j in 10' :key='j' class='col'>
+                <div v-bind:class="[{'cardMesa': findMesa(j, i).activada, 'cardMesaDisabled': !findMesa(j, i).activada}]">
+                    <p>{{findMesa(j, i).nombre}}</p>
+                    <p>{{findMesa(j, i).total}}</p>
+                </div>
+            </div>
+        </div> 
     </div>
     <div class="position-fixed bottom-0 end-0 mb-1 me-2">
         <button @click="volver()" class="btn btn-warning sizeBotones me-2"> Volver </button>
-        <button type="button" class="btn btn-primary sizeBotones" @click="abrirModal()"> Nueva cesta </button>
+        <button type="button" class="btn btn-primary sizeBotones" @click="abrirModal()">Inicio</button>
     </div>
 
     <!-- Modal -->
@@ -125,6 +132,14 @@
             });
             var modal = null;
 
+            function findMesa(col, row) {
+                let nMesa = col;
+                if(row !== 1) nMesa = (row * 10) - (10 - col);
+                const data = arrayCestas.value.find(i => i.idCestaSincro === `TaulaNom${nMesa}`);
+                if(data !== undefined) console.log(data)
+                return data !== undefined ? { activada: true, nombre: data.nombreCesta, total: data.lista.reduce((total, o) =>  o.subtotal + total,0) } : { activada: false, nombre: '', total: ''};
+            }
+
             function setActivo(x) {
                 activo.value = x;
             }
@@ -187,6 +202,7 @@
                 axios.get('cestas/getCestas').then((res) => {
                     if (res.data.error == false) {
                         arrayCestas.value = res.data.info;
+                        console.log(res.data.info)
                     } else {
                         toast.error(res.data.mensaje);
                     }
@@ -248,6 +264,7 @@
                 arrayCestas,
                 volver,
                 setActivo,
+                findMesa,
             };
         },
     };
@@ -271,9 +288,30 @@
         width: 210px;
         font-weight: bold;
     }
-
     .titleStyle {
         font-size: 25px;
         font-weight: bold;
+    }
+    .cardMesa {
+        border: 1px solid black;
+        border-radius: 5px;
+        text-align: center;
+        width: 7.5vw;
+        height: 5vw;
+        max-height: 5vw;
+        font-size: .8em;
+    }
+    .cardMesaDisabled {
+        border: 1px solid gray;
+        border-radius: 5px;
+        text-align: center;
+        width: 7.5vw;
+        height: 5vw;
+        max-height: 5vw;
+        color: gray;
+    }
+    .padding0 {
+        padding-right: 0;
+        padding-left: 0;
     }
 </style>

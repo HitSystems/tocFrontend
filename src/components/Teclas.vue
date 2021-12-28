@@ -1,18 +1,27 @@
 <template>
-  <div class="row pb-1" id="menusColores">
+  <div class="row pb-1" id="menusColores" v-if='showBackButton'>
       <div v-for='(item, index) of listaSubmenus' :key='index' @click='clickSubmenu(item.tag)' class='col colJuntitas menus' styled='padding-left: 4px;'>
         <button class='btn btn-secondary w-100 menus menusColorIvan colorMenus' v-bind:class="[{'activo': submenuEsActivo(item.tag)}]">
           {{item.nombre}}
         </button>
       </div>
   </div>
-  <div class="row m-0 mb-3" id="menusColores">
+  <div class="row" id="menusColores" v-bind:class="[{'mb-3': showBackButton === true, 'p-2': showBackButton === false}]">
       <template v-if="listaMenus.length <= 11">
-        <div v-for="(item, index) of listaMenus" :key="item.nomMenu" @click="clickMenu(index)" class="col colJuntitasMenus menus" style="padding-left: 4px;">
-          <button class="btn btn-secondary w-100 subMenus menusColorIvan colorMenus" v-bind:class="[{'activo' : esActivo(index)}]">
-            {{item.nomMenu}}
-          </button>
-        </div>
+        <template v-if='showBackButton'>
+          <div v-for="(item, index) of listaMenus" :key="item.nomMenu" @click="clickMenu(index)" class="col colJuntitasMenus subMenus" style="padding-left: 4px;">
+            <button class="btn btn-secondary w-100 subMenus menusColorIvan colorMenus" v-bind:class="[{'activo' : esActivo(index)}]">
+              {{item.nomMenu}}
+            </button>
+          </div>
+        </template>
+        <template v-else>
+          <div v-for="(item, index) of listaMenus" :key="item.nomMenu" @click="clickMenu(index)" class="col colJuntitasMenus menusSimples" style="padding-left: 4px;">
+            <button class="btn btn-secondary w-100 menusSimples menusColorIvan colorMenus" v-bind:class="[{'activo' : esActivo(index)}]">
+              {{item.nomMenu}}
+            </button>
+          </div>
+        </template>
       </template>
       <template v-else class="scrollmenu">
         <div class="scrollmenu" style="-webkit-transform: translateZ(0); ">
@@ -645,6 +654,9 @@ export default {
 }
 .subMenus {
   height: 50px;
+}
+.menusSimples {
+  height: 70px;
 }
 .colorMenus {
     background-color: #d45600;
