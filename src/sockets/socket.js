@@ -7,8 +7,10 @@ import { useToast } from "vue-toastification";
 
 const toast = useToast();
 
-socket.emit('test', 'andate a la concha de tu madre');
 
+socket.on('test', (data) => {
+    console.log(data);
+});
 socket.on('resDatafono', (data) => {
     console.log(data);
 });

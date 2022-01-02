@@ -20,6 +20,11 @@
             <button class="btn btn-primary buttonSizeTecnico" data-bs-toggle="modal" data-bs-target="#modalConfigImpresora">Config. VID y PID impresora</button>
           </div>
       </div>
+      <div class="row text-center mt-2">
+          <div class="col">
+            <button class="btn btn-primary buttonSizeTecnico" @click="imprimirTest()">Imprimir test</button>
+          </div>
+      </div>
   </div>
   <div class="position-fixed bottom-0 start-0 ms-2 mb-2">
       <button class="btn btn-warning buttonSizeTecnico" @click="volver()">Volver</button>
@@ -96,6 +101,10 @@ export default {
             });
         }
 
+        function imprimirTest() {
+            axios.post('test/imprimirAlgo');
+        }
+
         function guardarCambiosImpresora() {
             axios.post('parametros/vidAndPid', { vid: vid.value, pid: pid.value }).then((res) => {
                 if (res.data.error == false) {
@@ -137,6 +146,7 @@ export default {
         });
 
         return {
+            imprimirTest,
             guardarCambiosImpresora,
             vid,
             pid,
