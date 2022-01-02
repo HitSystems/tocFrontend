@@ -63,7 +63,7 @@ import { useStore } from 'vuex';
 import axios from 'axios';
 import { Modal } from 'bootstrap';
 import { useToast } from 'vue-toastification';
-import { socket } from '../sockets/socket';
+import { socket, emitSocket } from '../sockets/socket';
 
 export default {
   name: 'MenuClientes',
@@ -178,7 +178,8 @@ export default {
     }
 
     function infoPuntos(id) {
-      socket.emit('consultarPuntos', { idClienteFinal: id });
+      emitSocket('consultarPuntos', { idClienteFinal: id });
+      // socket.emit('consultarPuntos', { idClienteFinal: id });
     }
 
     onMounted(() => {

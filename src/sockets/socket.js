@@ -7,7 +7,10 @@ import { useToast } from "vue-toastification";
 
 const toast = useToast();
 
-
+socket.on('disconnect', () => {
+  console.log("Desconectado del servidor");
+  socket.sendBuffer = [];
+})
 socket.on('test', (data) => {
     console.log(data);
 });
@@ -49,4 +52,10 @@ socket.on('resDatafono', (data) => {
     }
 });
 
-export { socket };
+function emitSocket(canal, datos = null) {
+  if (socket.connected) {
+    socket.emit(canal, datos);
+  }
+}
+
+export { socket, emitSocket };

@@ -6,12 +6,13 @@
 <script>
 import { onMounted } from 'vue';
 import { tocGame } from './services/tocGame';
-import { socket } from './sockets/socket';
+import { socket, emitSocket } from './sockets/socket';
 
 export default {
   setup() {
     function testsocket() {
-      socket.emit('enviarAlDatafono');
+      socket.emitSocket('enviarAlDatafono');
+      // socket.emit('enviarAlDatafono');
     }
     onMounted(() => {
       tocGame.hayFichados().then((res) => {

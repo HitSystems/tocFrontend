@@ -1,5 +1,4 @@
 <template>
-<button @click="test()">TEST</button>
   <div class="row p-2" id="menusColores">
     <template v-if="listaMenus.length <= 11">
       <div v-for="(item, index) of listaMenus" :key="item.nomMenu" @click="clickMenu(index)" class="col colJuntitasMenus menus" style="padding-left: 4px;">
@@ -75,7 +74,7 @@ import { useStore } from 'vuex';
 import axios from 'axios';
 import router from '../router/index';
 import { useToast } from 'vue-toastification';
-import { socket } from "../sockets/socket";
+import { socket, emitSocket } from "../sockets/socket";
 
 export default {
   name: 'Teclas',
@@ -102,10 +101,21 @@ export default {
     const unidadesAplicar = 1;
     const edadState = computed(() => store.state.modalPeso.edadState);
 
-    function test() {
-      socket.emit('test', 'andate a la concha de tu madre');
-      console.log(socket.sendBuffer);
-    }
+    // function test() {
+    //   emitSocket('test', { destino: 'La concha de tu hermana' });
+    //   // socket.emit('test', { destino: 'La concha de tu hermana' });
+    //   console.log(socket.sendBuffer);
+    // }
+    // function test2() {
+    //   // socket.sendBuffer = [];
+    //   // console.log(socket.sendBuffer);
+    //   console.log("Hey",  socket.connected);
+    // }
+    // function test3() {
+    //   emitSocket('lawea', { destino: 'fdssad' });
+    //   // socket.emit('lawea', { destino: 'La concha de tu prima' });
+    //   console.log(socket.sendBuffer);
+    // }
     function esActivo(x) {
       if (x === menuActivo) {
         return true;
@@ -504,7 +514,6 @@ export default {
     });
 
     return {
-      test,
       edadState,
       listaMenus,
       menuActivo,

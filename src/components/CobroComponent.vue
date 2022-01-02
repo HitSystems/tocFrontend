@@ -212,7 +212,7 @@ import {
 } from 'vue';
 import { useToast } from "vue-toastification";
 import router from '../router/index';
-import { socket } from '../sockets/socket';
+import { socket, emitSocket } from '../sockets/socket';
 
 export default {
   name: 'CobroComponent',
@@ -413,7 +413,8 @@ export default {
             axios.post('parametros/getParametros').then((resParams) => {
               if (resParams.data.parametros != undefined || resParams.data.parametros != null) {
                 if (resParams.data.parametros.tipoDatafono == 'CLEARONE') {
-                  socket.emit('enviarAlDatafono', { total: Number(total), idCesta: cestaID.value, idClienteFinal: infoCliente });
+                  emitSocket('enviarAlDatafono', { total: Number(total), idCesta: cestaID.value, idClienteFinal: infoCliente });
+                  // socket.emit('enviarAlDatafono', { total: Number(total), idCesta: cestaID.value, idClienteFinal: infoCliente });
                   setEsperando(true);
                 } else if (resParams.data.parametros.tipoDatafono == 'PAYTEF'){
                   setEsperando(true);
@@ -421,7 +422,8 @@ export default {
                     if (resPaytef.data.error == true) {
                       toast.error(resPaytef.data.mensaje);
                     } else {
-                      socket.emit('polling', { cantidad: Number(total), idCesta: cestaID.value, idClienteFinal: infoCliente });
+                      emitSocket('polling', { cantidad: Number(total), idCesta: cestaID.value, idClienteFinal: infoCliente });
+                      // socket.emit('polling', { cantidad: Number(total), idCesta: cestaID.value, idClienteFinal: infoCliente });
                     }
                   }).catch((err) => {
                     console.log(err);
