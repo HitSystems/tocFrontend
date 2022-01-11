@@ -124,7 +124,7 @@ export default {
         }
 
         function actualizarTrabajadores() {
-            axios.post('trabajadores/atualizarTrabajadores').then((res) => {
+            axios.post('trabajadores/actualizarTrabajadores').then((res) => {
                 if (res.data.error == false) {
                     toast.success('Trabajadores actualizados');
                 } else {
