@@ -12,6 +12,11 @@
       </div>
       <div class="row text-center mt-2">
           <div class="col">
+            <button class="btn btn-primary buttonSizeTecnico" @click="actualizarTrabajadores()">Actualizar trabajadores</button>
+          </div>
+      </div>
+      <div class="row text-center mt-2">
+          <div class="col">
             <button class="btn btn-primary buttonSizeTecnico" @click="actualizarTeclados()">Actualizar teclado</button>
           </div>
       </div>
@@ -118,6 +123,16 @@ export default {
             });
         }
 
+        function actualizarTrabajadores() {
+            axios.post('trabajadores/atualizarTrabajadores').then((res) => {
+                if (res.data.error == false) {
+                    toast.success('Trabajadores actualizados');
+                } else {
+                    toast.error(res.data.mensaje);
+                }
+            });
+        }
+
         function descargarTicketInfo() {
             axios.post('params-ticket/descargarInfoTicket').then((res) => {
                 if (res.data.error == false) {
@@ -146,6 +161,7 @@ export default {
         });
 
         return {
+            actualizarTrabajadores,
             imprimirTest,
             guardarCambiosImpresora,
             vid,
