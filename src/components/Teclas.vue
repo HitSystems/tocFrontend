@@ -80,10 +80,35 @@
         </div>
     </div>
   </div>
+  <!-- MODAL SUPLEMENTOS -->
+  <div class="modal fade" id="modalSuplementos" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Suplementos</h5>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                <div v-for='(item, index) of suplementos' :key='index' class='col mb-3'>
+                  <button class='btn btn-secondary w-100 h-100 colorIvan1' @click="addSuplemento(item._id)">
+                    {{item.nombre}}
+                    <br />
+                    {{item.precioBase}} €
+                  </button>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary btn-lg" @click="cerrarModal(true)">Cancelar</button>
+        </div>
+        </div>
+    </div>
+    </div>
 </template>
 
 <script>
 /* eslint-disable */
+import { Modal } from 'bootstrap';
 import { computed, onMounted, ref } from 'vue';
 import { useStore } from 'vuex';
 // import { Modal } from 'bootstrap';
@@ -120,6 +145,22 @@ export default {
     const botonesPrecio = false;
     const unidadesAplicar = 1;
     const edadState = computed(() => store.state.modalPeso.edadState);
+    let idArticulo = null;
+    let modalSuplementos = null;
+    let suplementos = ref([]);
+
+    function cerrarModal(borrarItem = false) {
+      if(borrarItem) {
+        axios.post('/cestas/borrarItemCesta', { _id: cesta.value._id, idArticulo, idArticulo }).then((res) => {
+          if (res.data.okey) {
+            store.dispatch('Cesta/setCestaAction', res.data.cestaNueva);
+          } else {
+            console.log(res.data.okey);
+          }
+        });
+      }
+      modalSuplementos.hide();
+    }
 
     function test() {
       // //store.dispatch('ModalPeso/abrirModal', { idArticulo: articuloAPeso.idArticle, idBoton });
@@ -498,11 +539,11 @@ export default {
 
     function goBackSubmenus() {
       clickBack = true;
-      console.log("🚀 ~ file: Teclas.vue ~ line 494 ~ goBackSubmenus ~ clickBack", clickBack)
       getSubmenus(true);
     }
 
     function clickTecla(objListadoTeclas) {
+      idArticulo = objListadoTeclas.idArticle;
       axios.post('cestas/clickTeclaArticulo', {
         idArticulo: objListadoTeclas.idArticle,
         idBoton: objListadoTeclas.idBoton,
@@ -512,10 +553,30 @@ export default {
         unidades: (store.getters['getUnidades'] == 0) ? (1):(store.getters['getUnidades'])
       }).then((res2) => {
         if (res2.data.error === false && res2.data.bloqueado === false) {
-          store.dispatch('resetUnidades');
-          store.dispatch('Cesta/setCestaAction', res2.data.cesta);
+          if(res2.data.cesta.suplementos) {
+            suplementos.value = res2.data.cesta.data;
+            modalSuplementos.show();
+          } else {
+            store.dispatch('resetUnidades');
+            store.dispatch('Cesta/setCestaAction', res2.data.cesta);
+          }
         } else {
           console.log('Error en clickTeclaArticulo');
+        }
+      }).catch((err) => {
+        console.log(err);
+        toast.error('Error. Comprobar consola');
+      });
+    }
+
+    function addSuplemento(idSuplemento) {
+      axios.post('cestas/addSuplemento', { idCesta: cesta.value._id, idSuplemento, idArticulo }).then((res) => {
+        if(!res.data.error && !res.data.bloqueado) {
+          store.dispatch('resetUnidades');
+          store.dispatch('Cesta/setCestaAction', res.data.cesta);
+          cerrarModal();
+        } else {
+          console.log('Error en clickSuplemento');
         }
       }).catch((err) => {
         console.log(err);
@@ -562,6 +623,10 @@ export default {
     getSubmenus();
 
     onMounted(() => {
+      modalSuplementos = new Modal(document.getElementById('modalSuplementos'), {
+        keyboard: false,
+        backdrop: 'static',
+      });
       document.onselectstart = function(){ return false; }
       /* OBSERVAR SI LA CAJA ESTÁ ABIERTA */
       axios.post('caja/estadoCaja').then((res) => {
@@ -598,6 +663,9 @@ export default {
       submenuEsActivo,
       showBackButton,
       goBackSubmenus,
+      suplementos,
+      addSuplemento,
+      cerrarModal,
     };
     /* FINAL SETUP */
   },

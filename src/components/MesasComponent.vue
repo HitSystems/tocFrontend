@@ -52,7 +52,7 @@
         </div>-->
         <div v-for="i in 10" :key='i' class='row mt-1'>
             <div v-for='j in 10' :key='j' class='col'>
-                <div v-bind:class="[{'cardMesa': findMesa(j, i).activada, 'cardMesaDisabled': !findMesa(j, i).activada}]">
+                <div class='mesaGeneral' @click='seleccionarCesta(findMesa(j, i))' v-bind:class="[{'cardMesa': findMesa(j, i).activada, 'cardMesaDisabled': !findMesa(j, i).activada}]">
                     <p>{{findMesa(j, i).nombre}}</p>
                     <p>{{findMesa(j, i).total}}</p>
                 </div>
@@ -132,13 +132,6 @@
             });
             var modal = null;
 
-            function findMesa(col, row) {
-                let nMesa = col;
-                if(row !== 1) nMesa = (row * 10) - (10 - col);
-                const data = arrayCestas.value.find(i => i.idCestaSincro === `TaulaNom${nMesa}`);
-                if(data !== undefined) console.log(data)
-                return data !== undefined ? { activada: true, nombre: data.nombreCesta, total: data.lista.reduce((total, o) =>  o.subtotal + total,0) } : { activada: false, nombre: '', total: ''};
-            }
 
             function setActivo(x) {
                 activo.value = x;
@@ -176,9 +169,18 @@
                 }
             }
 
-            function seleccionarCesta(index) {
-                store.dispatch('Cesta/setIdAction', arrayCestas.value[index]._id);
+            function seleccionarCesta(data) {
+                store.dispatch('Cesta/setIdAction', data.idMongo);
+                store.dispatch('CestasActivas/setCestasActivasAction', {idMongo: data.idMongo, nombre: data.nombre});
                 volver();
+            }
+
+            function findMesa(col, row) {
+                let nMesa = col;
+                if(row !== 1) nMesa = (row * 10) - (10 - col);
+                const data = arrayCestas.value.find(i => i.idCestaSincro === `TaulaNom${nMesa}`);
+                if(data !== undefined) console.log(data)
+                return data !== undefined ? { idMongo: data._id, activada: true, nombre: data.nombreCesta, total: data.lista.reduce((total, o) =>  o.subtotal + total,0) } : { activada: false, nombre: '', total: ''};
             }
 
             function existePosicion(index) {
@@ -313,5 +315,8 @@
     .padding0 {
         padding-right: 0;
         padding-left: 0;
+    }
+    .mesaGeneral {
+        cursor: pointer;
     }
 </style>

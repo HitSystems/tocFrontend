@@ -24,6 +24,10 @@ import socket from '../sockets/socket';
 
 import Caja from './modules/Caja';
 
+import CestasActivas from './modules/CestasActivas';
+
+import Suplementos from './modules/Suplementos';
+
 let timeoutBorrar = null;
 
 window.addEventListener('contextmenu', function (e) { 
@@ -102,5 +106,7 @@ export default createStore({
     Clientes,
     Caja,
     Footer,
+    CestasActivas,
+    Suplementos,
   },
 });

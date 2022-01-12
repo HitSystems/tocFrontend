@@ -127,11 +127,11 @@
     </div>
     <div class="col">
       <div class="row me-1">
-        <select @change="cambioActivo()" class="form-select" v-model="trabajadorActivo">
+        <!--<select @change="cambioActivo()" class="form-select" v-model="trabajadorActivo">
           <option v-for="(trabajador, index) in arrayTrabajadores" v-bind:key="index">
             {{trabajador.nombre}}
           </option>
-        </select>
+        </select>-->
       </div>
       <div class="row me-1 mt-1">
         <button
@@ -235,7 +235,7 @@ export default {
     const notificaciones = computed(() => store.state.Notificaciones.cantidad);
     const conCliente = null;
     const unidades = computed(() => store.state.unidades);
-    const trabajadorActivo = ref('');
+    const trabajadorActivo = computed(() => store.state.Trabajadores.trabajadorActivo);
     const arrayTrabajadores = ref([]);
     const menuActivo = computed(() => store.state.Footer.menuActivo);
     const modoActual = computed(() => store.state.modoActual);
@@ -459,7 +459,7 @@ export default {
       if (modoActual.value == 'DEVOLUCION' || modoActual.value == 'CLIENTE') {
         store.dispatch('Footer/setMenuActivo', 1);
       }
-
+      console.log('Getter', store.getters['Trabajadores/getTrabajadorActivo']);
       /* INICIALIZACIÓN DE CESTA */
       axios.post('/cestas/getCestaByID', { idCesta: store.getters['Cesta/getCestaId'] }).then((res) => {
         if (res.data.error == false) {
@@ -469,30 +469,7 @@ export default {
         }
       });
 
-      axios.post('trabajadores/getTrabajadoresFichados').then((info) => {
-        if(!info.data.error) {
-          if (info.data.res.length > 0) {
-            store.dispatch('Trabajadores/setArrayTrabajadores', info.data.res);
-            arrayTrabajadores.value = info.data.res;
-            axios.post('trabajadores/getCurrentTrabajador').then((infoTrabajador) => {
-              if (!infoTrabajador.data.error) {
-                trabajadorActivo.value = infoTrabajador.data.trabajador.nombre;
-                store.dispatch('Trabajadores/setTrabajadorActivo', infoTrabajador.data.trabajador.nombre);
-              } else {
-                console.log('Error en getCurrentTrabajador');
-              }
-            }).catch((err) => {
-              console.log(err);
-            });
-          } else {
-            // ENVIAR DIRECTAMENTE A FICHAR TRABAJADOR !!!
-          }
-        } else {
-          console.log('Error en getTrabajadoresFichados');
-        }
-      }).catch((err) => {
-        console.log(err);
-      });
+      
     });
 
     function setActivo(index) {
