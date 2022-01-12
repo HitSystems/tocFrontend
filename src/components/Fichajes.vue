@@ -4,7 +4,7 @@
             <div class="card cardWidth">
                 <div class="card-body" style='text-align: center;'>
                     <span><i class="bi bi-door-open"></i></span>
-                    <a href="#" class="btn btn-primary" @click="abrirModal()">Fichar</a>
+                    <a href="#" class="btn btn-primary" @click="abrirModal()">Fichaje</a>
                 </div>
             </div>
 
@@ -19,17 +19,18 @@
 
     <!-- Modal -->
     <div class="modal fade" id="modalFichajes" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog" style="max-width: 700px">
         <div class="modal-content">
         <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel">Fichar</h5>
+            <h5 class="modal-title" id="exampleModalLabel">Fichaje</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
             <div class="row">
                 <input v-model="inputBusqueda" class="form-control" style="width: 350px; height: 50px; font-size: 20px" type="text" placeholder="Introduce tu nombre">
                 <button type="button" style="width: 100px" class="btn btn-primary ms-2" @click="buscar()">Buscar</button>
-                <div class="row">
+                <button type="button" style="width: 200px" class="btn btn-warning ms-2" @click="actualizarLista()">Actualizar lista</button>
+                <div class="row mt-2">
                     <div class="table" style="height: 400px;">
                         <table class="table table-striped">
                             <thead>
@@ -41,8 +42,8 @@
                             <tbody>
                                 <tr v-for="(trabajador, index) of arrayTrabajadores" v-bind:key="index">
                                     <td>{{trabajador.nombre}}</td>
-                                    <td v-if="trabajador.fichado === false || trabajador.fichado == undefined"><a href="#" class="btn btn-outline-primary btn_fc" @click="fichar(trabajador, index)">FICHAR</a></td>
-                                    <td v-else><a href="#" class="btn btn-outline-success btn_fc" @click="desfichar(trabajador, index)">DESFICHAR</a></td>
+                                    <td v-if="trabajador.fichado === false || trabajador.fichado == undefined"><a href="#" style="width: 150px" class="btn btn-outline-primary btn_fc" @click="fichar(trabajador, index)">FICHAR</a></td>
+                                    <td v-else><a href="#" style="width: 150px" class="btn btn-outline-success btn_fc" @click="desfichar(trabajador, index)">DESFICHAR</a></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -51,7 +52,7 @@
             </div>
         </div>
         <div class="modal-footer">
-            <button type="button" class="btn btn-secondary btn-lg" data-bs-dismiss="modal">Cerrar</button>
+            <button type="button" class="btn btn-danger btn-lg" data-bs-dismiss="modal">Cerrar</button>
         </div>
         </div>
     </div>
@@ -59,10 +60,11 @@
 </template>
 <script>
 import { Modal } from 'bootstrap';
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import axios from 'axios';
 import { useStore } from 'vuex';
 import router from '../router/index';
+import { useToast } from 'vue-toastification';
 
 export default {
     name: 'Dependientas',
@@ -73,6 +75,7 @@ export default {
         let modalFichajes = null;
         const arrayTrabajadores = ref([]);
         const inputBusqueda = ref('');
+        const toast = useToast();
 
         function abrirModal() {
             modalFichajes.show();
@@ -105,6 +108,16 @@ export default {
             });
         }
 
+        function actualizarLista() {
+            axios.post('trabajadores/actualizarTrabajadores').then((res) => {
+                if (res.data.error == false) {
+                    toast.success('Trabajadores actualizados');
+                } else {
+                    toast.error(res.data.mensaje);
+                }
+            });
+        }
+
         function desfichar(trabajador, index) {
             axios.post('trabajadores/desfichar', { idTrabajador: trabajador.idTrabajador }).then((res) => {
                 if (!res.data.error) {
@@ -131,6 +144,7 @@ export default {
         });
 
         return {
+            actualizarLista,
             consumoPersonal,
             fichar,
             desfichar,
@@ -143,6 +157,13 @@ export default {
             id,
         };
     },
+    watch: {
+        inputBusqueda: function () {
+            if (this.inputBusqueda.length >= 3) {
+                this.buscar();
+            }
+        }
+    }
 };
 </script>
 <style scoped>
