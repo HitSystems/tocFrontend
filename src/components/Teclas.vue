@@ -90,7 +90,7 @@
         <div class="modal-body">
             <div class="row">
                 <div v-for='(item, index) of suplementos' :key='index' class='col mb-3'>
-                  <button class='btn btn-secondary w-100 h-100 colorIvan1' @click="addSuplemento(item._id)">
+                  <button class='btn w-100 h-100 colorIvan1 btnSuplemento' @click="selectSuplemento(item._id)" v-bind:class="[{'suplementoActivo': checkSuplementoActivo(item._id)}]">
                     {{item.nombre}}
                     <br />
                     {{item.precioBase}} €
@@ -99,7 +99,8 @@
             </div>
         </div>
         <div class="modal-footer">
-            <button type="button" class="btn btn-secondary btn-lg" @click="cerrarModal(true)">Cancelar</button>
+            <button type="button" class="btn btn-secondary btn-lg colorIvan3" @click="cerrarModal(true)">Cancelar</button>
+            <button type="button" class="btn btn-secondary btn-lg colorIvan4" @click="addSuplemento()">Añadir</button>
         </div>
         </div>
     </div>
@@ -148,6 +149,8 @@ export default {
     let idArticulo = null;
     let modalSuplementos = null;
     let suplementos = ref([]);
+    //let suplementosSeleccionados = computed(() => store.state.Suplementos.suplementosSeleccionados);
+    let suplementosSeleccionados = ref([]);
 
     function cerrarModal(borrarItem = false) {
       if(borrarItem) {
@@ -569,11 +572,28 @@ export default {
       });
     }
 
-    function addSuplemento(idSuplemento) {
-      axios.post('cestas/addSuplemento', { idCesta: cesta.value._id, idSuplemento, idArticulo }).then((res) => {
+    function selectSuplemento(idSuplemento) {
+      const supl = suplementosSeleccionados.value.findIndex(o => o.suplemento === idSuplemento);
+      if(supl !== -1) {
+        suplementosSeleccionados.value.splice(supl, 1);
+        return;
+      }
+      suplementosSeleccionados.value.push({ suplemento: idSuplemento, activo: true });
+    }
+
+    function checkSuplementoActivo(idSuplemento) {
+      const s = suplementosSeleccionados.value.findIndex(o => o.suplemento === idSuplemento)
+      console.log(s)
+      return s !== -1 ? true : false;
+    }
+
+    function addSuplemento() {
+      axios.post('cestas/addSuplemento', { idCesta: cesta.value._id, suplementos: suplementosSeleccionados.value, idArticulo }).then((res) => {
         if(!res.data.error && !res.data.bloqueado) {
           store.dispatch('resetUnidades');
           store.dispatch('Cesta/setCestaAction', res.data.cesta);
+          suplementosSeleccionados.value = [];
+          idArticulo = null;
           cerrarModal();
         } else {
           console.log('Error en clickSuplemento');
@@ -666,6 +686,9 @@ export default {
       suplementos,
       addSuplemento,
       cerrarModal,
+      suplementosSeleccionados,
+      selectSuplemento,
+      checkSuplementoActivo,
     };
     /* FINAL SETUP */
   },
@@ -771,5 +794,11 @@ export default {
     width: 100%;
     overflow-x: scroll;
     white-space: nowrap;
+  }
+  .suplementoActivo {
+    background-color: #FBB5B5 !important;
+  }
+  .btnSuplemento:focus, .btnSuplemento:active {
+    box-shadow: none !important;
   }
 </style>
