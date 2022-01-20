@@ -203,6 +203,13 @@ export default {
       clienteActivo,
     };
   },
+   watch: {
+      inputBusqueda: function () {
+         if (this.inputBusqueda.length >= 3) {
+               this.buscar();
+         }
+      }
+   }
 };
 </script>
 <style scoped>
