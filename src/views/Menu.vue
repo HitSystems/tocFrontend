@@ -77,11 +77,7 @@ export default {
     const params = tocGame.getParametros();
 
     if (props.tipoToast != undefined && props.mensajeToast != undefined) {
-      toast(props.mensajeToast, { type: props.tipoToast })
-      console.log('Deberían abrirse la ptm');
-    } else {
-      console.log('No están definidos. INFO TOAST');
-      console.log(props.tipoToast, props.mensajeToast);
+      toast(props.mensajeToast, { type: props.tipoToast });
     }
 
     function quitarActivoTicket() {

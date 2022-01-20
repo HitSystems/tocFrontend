@@ -75,6 +75,7 @@ import axios from 'axios';
 import router from '../router/index';
 import { useToast } from 'vue-toastification';
 import { socket, emitSocket } from "../sockets/socket";
+import { tocGame } from '../services/tocGame';
 
 export default {
   name: 'Teclas',
@@ -446,18 +447,21 @@ export default {
     function clickMenu(index) {
       if (!clickMenuBloqueado) {
         clickMenuBloqueado = true;
-        axios.post('/menus/clickMenu', { nombreMenu: listaMenus.value[index].nomMenu }).then((res) => {
-          if (!res.data.bloqueado) {
-            menuActivo = index;
+        /* Debe existir al menos 1 menú en el array */
+        if (listaMenus.value.length > 0) {
+          axios.post('/menus/clickMenu', { nombreMenu: listaMenus.value[index].nomMenu }).then((res) => {
+            if (!res.data.bloqueado) {
+              menuActivo = index;
+              clickMenuBloqueado = false;
+              cargarTeclado(res.data.resultado);
+            } else {
+              console.log('Pero donde vas, Rayo McQueen');
+            }
+          }).catch((err) => {
+            console.log(err);
             clickMenuBloqueado = false;
-            cargarTeclado(res.data.resultado);
-          } else {
-            console.log('Pero donde vas, Rayo McQueen');
-          }
-        }).catch((err) => {
-          console.log(err);
-          clickMenuBloqueado = false;
-        });
+          });
+        }
       } else {
         console.log('Estoy bloqueado');
       }
@@ -497,20 +501,21 @@ export default {
     onMounted(() => {
       document.onselectstart = function(){ return false; }
       /* OBSERVAR SI LA CAJA ESTÁ ABIERTA */
-      axios.post('caja/estadoCaja').then((res) => {
-        if (!res.data.error) {
-          if (res.data.abierta) {
-            store.dispatch('Caja/setEstadoCaja', true);
-            console.log('establezco cajaAbierta = true');
-          } else {
-            store.dispatch('Caja/setEstadoCaja', false);
-            router.push('/abrirCaja');
-          }
-        }
-      }).catch((err) => {
-        console.log(err);
-        toast.error('Error, contactar con informática');
-      });
+      tocGame.iniciarToc();
+      // axios.post('caja/estadoCaja').then((res) => {
+      //   if (!res.data.error) {
+      //     if (res.data.abierta) {
+      //       store.dispatch('Caja/setEstadoCaja', true);
+      //       console.log('establezco cajaAbierta = true');
+      //     } else {
+      //       store.dispatch('Caja/setEstadoCaja', false);
+      //       router.push('/abrirCaja');
+      //     }
+      //   }
+      // }).catch((err) => {
+      //   console.log(err);
+      //   toast.error('Error, contactar con informática');
+      // });
     });
 
     return {

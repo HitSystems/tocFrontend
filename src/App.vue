@@ -7,33 +7,21 @@
 import { onMounted } from 'vue';
 import { tocGame } from './services/tocGame';
 import { socket, emitSocket } from './sockets/socket';
+import { useToast } from 'vue-toastification';
+import router from './router/index';
 
 export default {
   setup() {
+    const toast = useToast();
     function testsocket() {
       socket.emitSocket('enviarAlDatafono');
       // socket.emit('enviarAlDatafono');
     }
-    onMounted(() => {
-      tocGame.hayFichados().then((res) => {
-        if (res) {
-          tocGame.cajaAbierta().then((res2) => {
-            if (res2 == true) {
-              console.log('Hay fichados + caja abierta');
-            } else {
-              console.log('Hay fichados + caja cerrada');
-            }
-          }).catch((err) => {
-            console.log(err);
-          });
-        } else {
-          console.log('NO hay fichados');
-        }
-      }).catch((err) => {
-        console.log(err);
-      });
-      //router.push('/cobro/56');
-    });
+    // /* INICIO TOC */
+    // onMounted(() => {
+    //   tocGame.iniciarToc();
+    // });
+
     return {
       testsocket,
     };

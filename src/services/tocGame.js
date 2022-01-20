@@ -1,4 +1,7 @@
 import axios from "axios";
+import store from '../store/index';
+import router from '../router/index';
+
 const baseURL = 'http://localhost:3000/';
 
 class tocGameV3 {
@@ -38,15 +41,51 @@ class tocGameV3 {
     cajaAbierta() {
         return axios.post(baseURL + 'caja/estadoCaja').then((res) => {
             if (res.data.error == false) {
+                store.dispatch('Caja/setEstadoCaja', true);
                 return res.data.abierta;
             } else {
-                console.log(res.data.mensaje);
+                store.dispatch('Caja/setEstadoCaja', false);
                 return false;
             }
         }).catch((err) => {
             console.log(err);
             return false;
         });
+    }
+
+    todoInstalado() {
+        return axios.post(baseURL + 'parametros/todoInstalado').then((res) => {
+            return res.data.todoInstalado;
+        }).catch((err) => {
+            console.log(err);
+            return false;
+        });
+    }
+
+    iniciarToc() {
+        tocGame.todoInstalado().then((hayLicencia) => {
+            if (hayLicencia) { // Licencia OK
+              tocGame.hayFichados().then((res) => {
+                if (res) { // Fichaje mínimo OK
+                  tocGame.cajaAbierta().then((res2) => {
+                    if (res2 == false) router.push('/abrirCaja');
+                  }).catch((err) => {
+                    console.log(err);
+                  });
+                } else {
+                  console.log('No hay fichados');
+                  router.push('/menu/fichajes');
+                }
+              }).catch((err) => {
+                console.log(err);
+                console.log('Error en catch tocGame.hayFicados()');
+              });
+            } else {
+              router.push('/installWizard');
+            }
+          }).catch((err) => {
+            console.log('Error en catch tocGame.todoInstalado()');
+          });
     }
 }
 
