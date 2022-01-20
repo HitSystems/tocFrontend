@@ -321,7 +321,7 @@ export default {
           suma += cesta.value.lista[i].subtotal;
         }
       }
-      return (Math.round(suma*100)/100).toFixed(2);
+      return String(Math.round(suma*100)/100);
     });
     const cestaAlReves = computed(() => {
       const aux = cesta.value.lista; // Reverse muta el array.
