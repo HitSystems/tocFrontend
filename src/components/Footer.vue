@@ -154,7 +154,7 @@
     <MenuClientes />
   </div>
   <div class='row'>
-    <span>V 3.0.16 BETA</span>
+    <span>V 3.0.18 BETA</span>
   </div>
   <!-- Modal unidades -->
   <div class="modal fade" id="modalUnidades" tabindex="-1">
@@ -214,6 +214,30 @@
       </div>
     </div>
   </div>
+  <!-- MODAL SUPLEMENTOS -->
+  <div class="modal fade" id="modalSuplementosModificar" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Modificar suplementos</h5>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                <div v-for='(item, index) of suplementos' :key='index' class='col mb-3'>
+                  <button class='btn w-100 h-100 colorIvan1 btnSuplemento' @click="selectSuplemento(item._id)" v-bind:class="[{'suplementoActivo': checkSuplementoActivo(item._id)}]">
+                    {{item.nombre}}
+                    <br />
+                    {{item.precioBase}} €
+                  </button>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary btn-lg colorIvan4" @click="addSuplemento()">OK</button>
+        </div>
+        </div>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -225,6 +249,7 @@ import { useStore } from 'vuex';
 
 import MenuClientes from '@/components/MenuClientes.vue'; // @ is an alias to /src
 import { useToast } from "vue-toastification";
+import { Modal } from 'bootstrap';
 import router from '../router/index';
 
 export default {
@@ -248,6 +273,10 @@ export default {
 
     let inicioMagic = null;
     let finalMagic = null;
+
+    let modalSuplementos = null;
+    let suplementos = ref([]);
+    let suplementosSeleccionados = ref([]);
 
     function touchStart() {
       inicioMagic = new Date();
@@ -457,6 +486,10 @@ export default {
     }
 
     onMounted(() => {
+      modalSuplementos = new Modal(document.getElementById('modalSuplementosModificar'), {
+        keyboard: false,
+        backdrop: 'static',
+      });
       /* SET MODO ACTUAL */
       if (modoActual.value == 'DEVOLUCION' || modoActual.value == 'CLIENTE') {
         store.dispatch('Footer/setMenuActivo', 1);
@@ -475,8 +508,52 @@ export default {
     });
 
     function setActivo(index) {
-      console.log(index);
+      if(activo.value === index) {
+        axios.post('/cestas/modificarSuplementos', { cestaId: store.getters['Cesta/getCestaId'], idArticulo: store.getters['Cesta/getItem'], posArticulo: index }).then((res) => {
+          if(res.data.suplementos) {
+            suplementos.value = res.data.suplementosData;
+            console.log("🚀 ~ file: Footer.vue ~ line 516 ~ axios.post ~ suplementos.value", suplementos.value)
+            for(let i = 0; i < res.data.suplementosSeleccionados.length; i++) {
+              selectSuplemento(res.data.suplementosSeleccionados[i]);
+            }
+            modalSuplementos.show();
+          }
+        }).catch((err) => {
+          console.log(err);
+        });
+      }
       store.dispatch('Cesta/setActivoAction', index);
+    }
+    function selectSuplemento(idSuplemento) {
+      const supl = suplementosSeleccionados.value.findIndex(o => o.suplemento === idSuplemento);
+      if(supl !== -1) {
+        suplementosSeleccionados.value.splice(supl, 1);
+        return;
+      }
+      suplementosSeleccionados.value.push({ suplemento: idSuplemento, activo: true });
+    }
+
+    function checkSuplementoActivo(idSuplemento) {
+      const s = suplementosSeleccionados.value.findIndex(o => o.suplemento === idSuplemento)
+      return s !== -1 ? true : false;
+    }
+    function addSuplemento() {
+      axios.post('cestas/addSuplemento', { idCesta: store.getters['Cesta/getCestaId'], suplementos: suplementosSeleccionados.value, idArticulo: store.getters['Cesta/getItem'], posArticulo: activo.value }).then((res) => {
+        if(!res.data.error && !res.data.bloqueado) {
+          store.dispatch('resetUnidades');
+          store.dispatch('Cesta/setCestaAction', res.data.cesta);
+          suplementosSeleccionados.value = [];
+          cerrarModal();
+        } else {
+          console.log('Error en clickSuplemento');
+        }
+      }).catch((err) => {
+        console.log(err);
+        toast.error('Error. Comprobar consola');
+      });
+    }
+    function cerrarModal() {
+      modalSuplementos.hide();
     }
     function borrar() {
       if (activo.value === null) {
@@ -541,6 +618,11 @@ export default {
       arrayTrabajadores,
       cambioActivo,
       goToCobrar,
+      cerrarModal,
+      suplementos,
+      selectSuplemento,
+      checkSuplementoActivo,
+      addSuplemento,
     };
   },
   components: {
@@ -668,5 +750,25 @@ export default {
 .unidadesStyle {
   font-size: 44px;
   font-weight: bold;
+}
+
+.suplementoActivo {
+  background-color: #FBB5B5 !important;
+}
+
+.btnSuplemento:focus, .btnSuplemento:active {
+  box-shadow: none !important;
+}
+
+.colorIvan3 {
+  background-color: #FBB5B5 !important;
+  color: #5E5F61 !important;
+  border-color: #FBB5B5 !important;
+}
+
+.colorIvan4 {
+  background-color: #DCE9D5 !important;
+  color: #5E5F61 !important;
+  border-color: #DCE9D5 !important;
 }
 </style>

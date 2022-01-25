@@ -104,7 +104,7 @@
         </div>
         </div>
     </div>
-    </div>
+  </div>
 </template>
 
 <script>
@@ -583,12 +583,11 @@ export default {
 
     function checkSuplementoActivo(idSuplemento) {
       const s = suplementosSeleccionados.value.findIndex(o => o.suplemento === idSuplemento)
-      console.log(s)
       return s !== -1 ? true : false;
     }
 
     function addSuplemento() {
-      axios.post('cestas/addSuplemento', { idCesta: cesta.value._id, suplementos: suplementosSeleccionados.value, idArticulo }).then((res) => {
+      axios.post('cestas/addSuplemento', { idCesta: cesta.value._id, suplementos: suplementosSeleccionados.value, idArticulo, posArticulo: -100 }).then((res) => {
         if(!res.data.error && !res.data.bloqueado) {
           store.dispatch('resetUnidades');
           store.dispatch('Cesta/setCestaAction', res.data.cesta);
