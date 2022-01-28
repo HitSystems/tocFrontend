@@ -2,7 +2,7 @@
   <div class="row pt-1">
     <div class='col-md-1'>
   <div class="d-flex flex-column align-items-stretch flex-shrink-0 bg-white"
-  style="width: 140px;">
+  style="width: 140px; height: 100%">
       <div class="list-group list-group-flush border-bottom scrollarea">
         <router-link to="/" class="list-group-item list-group-item-action py-3 lh-tight">
           <div class="d-flex w-100 align-items-center justify-content-between">

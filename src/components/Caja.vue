@@ -109,6 +109,7 @@ export default {
     function imprimirTicket() {
       if (activo.value != null) {
         axios.post('impresora/imprimirTicket', { idTicket: activo.value });
+        goTo('/');
       } else {
         console.log('Primero selecciona un ticket');
       }

@@ -149,14 +149,21 @@
       </div>
   </div>
   <div class="position-absolute bottom-0 start-0 mb-2" style="position: absolute;">
-      <div class="btn-group" role="group" aria-label="First group">
+      <div class="ms-2 mb-2 row" role="group" aria-label="First group">
+        <div class='col'>
+          <button type="button" class="btn btn-dark ms-2 botonesPrincipales" @click="enviarACocina()">Enviar a cocina</button>
+        </div>
+      </div>
+      <div class="row ms-2" role="group" aria-label="First group">
+        <div class='col'>
         <button type="button"
         @click="volver()"
-        class="btn btn-warning ms-2 botonesPrincipales">Volver</button>
+        class="btn btn-warning ms-4 botonesPrincipales">Volver</button>
         <button type="button"
           @click="reset()"
-          class="btn btn-danger ms-2 botonesPrincipales">Reset
+          class="btn btn-danger ms-4 botonesPrincipales">Reset
         </button>
+        </div>
       </div>
   </div>
 
@@ -235,6 +242,7 @@ export default {
     const metodoPagoActivo = ref('EFECTIVO');
     const totalTkrs = ref(0);
     const cuenta = ref(0);
+    const impresoraIp = ref(false);
     const arrayFichados = ref([]);
     const esperando = computed(() => store.state.esperandoDatafono); // ref(false);
     /* eslint no-underscore-dangle: ["error", { "allow": ["_id"] }] */
@@ -344,6 +352,7 @@ export default {
             totalTkrs: totalTkrs.value,
             idCesta: cestaID.value,
             idCliente: infoCliente,
+            impresoraIp: impresoraIp.value,
           }
           axios.post('tickets/crearTicketTKRS', data).then((res) => {
             if(!res.data.error) {
@@ -370,7 +379,8 @@ export default {
             axios.post('tickets/crearTicketEfectivo', {
               total: Number(total),
               idCesta: cestaID.value,
-              idCliente: infoCliente
+              idCliente: infoCliente,
+              impresoraIp: impresoraIp.value,
             }).then((res) => {
               if (!res.data.error) {
                 reset();
@@ -395,7 +405,8 @@ export default {
             axios.post('tickets/crearTicketDatafono3G', {
               total: Number(total),
               idCesta: cestaID.value,
-              idCliente: infoCliente
+              idCliente: infoCliente,
+              impresoraIp: impresoraIp.value,
             }).then((res) => {
               if (!res.data.error) {
                 reset();
@@ -429,10 +440,18 @@ export default {
     }
 
     function reset() {
+      store.dispatch('CestasActivas/deleteCestaActivaAction', cestaID.value);
       store.dispatch('Cesta/setIdAction', -1);
       store.dispatch('setModoActual', 'NORMAL');
       store.dispatch('Clientes/resetClienteActivo');
       store.dispatch('Footer/resetMenuActivo');
+    }
+
+    function enviarACocina() {
+      axios.post('cestas/enviarACocina', { idCesta: cestaID.value }).then((res) => {
+        if(!res.error) toast.success('OK.')
+        else toast.error('Error al enviar el pedido a cocina.')
+      })
     }
 
     function test() {
@@ -492,6 +511,8 @@ export default {
       volver,
       cobrar,
       esperando,
+      impresoraIp,
+      enviarACocina,
     };
   },
 };

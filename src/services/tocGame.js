@@ -1,6 +1,6 @@
 import axios from "axios";
-// const baseURL = 'http://localhost:3000/';
-const baseURL = 'http://63.35.219.5:3000';
+const baseURL = 'http://localhost:3000/';
+// const baseURL = 'http://63.35.219.5:3000';
 
 class tocGameV3 {
     parametros = null;

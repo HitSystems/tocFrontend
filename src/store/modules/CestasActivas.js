@@ -7,14 +7,25 @@ export default {
       setCestasActivasMutation(state, payload) {
         state.cestas.push(payload);
       },
+      deleteCestaActivaMutation(state, payload) {
+        const index = state.cestas.findIndex(i => i.idMongo === payload);
+        console.log('Nombre', state.cestas[index]);
+        if(state.cestas[index] !== undefined && state.cestas[index].nombre.split(' ')[0] === 'Taula') {
+          console.log('Entro por aqui');
+          state.cestas.splice(index, 1);
+        }
+      },
     },
     getters: {
       // eslint-disable-next-line no-underscore-dangle
       getCestasActivas: (state) => state.cestas,
     },
     actions: {
-        setCestasActivasAction({ commit }, cesta) {
+      setCestasActivasAction({ commit }, cesta) {
         commit('setCestasActivasMutation', cesta);
+      },
+      deleteCestaActivaAction({ commit }, cesta) {
+        commit('deleteCestaActivaMutation', cesta);
       },
     },
   };

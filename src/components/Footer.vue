@@ -154,7 +154,7 @@
     <MenuClientes />
   </div>
   <div class='row'>
-    <span>V 3.0.18 BETA</span>
+    <span style="font-size: 12px; margin-top: -5px;">V 3.0.18 BETA</span>
   </div>
   <!-- Modal unidades -->
   <div class="modal fade" id="modalUnidades" tabindex="-1">

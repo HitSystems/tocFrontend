@@ -52,7 +52,8 @@
         </div>-->
         <div v-for="i in 10" :key='i' class='row mt-1'>
             <div v-for='j in 10' :key='j' class='col'>
-                <div class='mesaGeneral' @click='seleccionarCesta(findMesa(j, i))' v-bind:class="[{'cardMesa': findMesa(j, i).activada, 'cardMesaDisabled': !findMesa(j, i).activada}]">
+                <!-- v-bind:class="[{'cardMesa': findMesa(j, i).activada, 'cardMesaDisabled': !findMesa(j, i).activada}]" -->
+                <div class='mesaGeneral cardMesa' @click='seleccionarCesta(findMesa(j, i))'>
                     <p>{{findMesa(j, i).nombre}}</p>
                     <p>{{findMesa(j, i).total}}</p>
                 </div>
@@ -178,9 +179,12 @@
             function findMesa(col, row) {
                 let nMesa = col;
                 if(row !== 1) nMesa = (row * 10) - (10 - col);
-                const data = arrayCestas.value.find(i => i.idCestaSincro === `TaulaNom${nMesa}`);
+                console.log(nMesa);
+                console.log(arrayCestas.value);
+                const data = arrayCestas.value.find(i => i.idCestaSincro === `Taula ${nMesa}`);
+                console.log('holala');
                 if(data !== undefined) console.log(data)
-                return data !== undefined ? { idMongo: data._id, activada: true, nombre: data.nombreCesta, total: data.lista.reduce((total, o) =>  o.subtotal + total,0) } : { activada: false, nombre: '', total: ''};
+                return data !== undefined ? { idMongo: data._id, activada: true, nombre: data.idCestaSincro, total: data.lista.reduce((total, o) =>  o.subtotal + total,0) } : { activada: false, nombre: '', total: ''};
             }
 
             function existePosicion(index) {
