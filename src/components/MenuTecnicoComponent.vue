@@ -27,6 +27,11 @@
       </div>
       <div class="row text-center mt-2">
           <div class="col">
+            <button class="btn btn-primary buttonSizeTecnico" data-bs-toggle="modal" data-bs-target="#modalConfigPaytef">Config. IP Paytef</button>
+          </div>
+      </div>
+      <div class="row text-center mt-2">
+          <div class="col">
             <button class="btn btn-primary buttonSizeTecnico" @click="imprimirTest()">Imprimir test</button>
           </div>
       </div>
@@ -60,6 +65,30 @@
     </div>
 </div>
 </div>
+<!-- FIN MODAL IMPRESORA -->
+
+<!-- Modal -->
+<div class="modal fade" id="modalConfigPaytef" tabindex="-1" aria-hidden="true">
+<div class="modal-dialog">
+    <div class="modal-content">
+    <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Configuración IP datáfono PAYTEF</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+    <div class="modal-body">
+        <div class="input-group mb-3">
+            <span class="input-group-text" id="basic-addon1">IP</span>
+            <input type="text" class="form-control" placeholder="10.129.xxx.29" v-model="ipPaytef">
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        <button type="button" class="btn btn-primary" @click="guardarCambiosPaytef()">Guardar cambios</button>
+    </div>
+    </div>
+</div>
+</div>
+<!-- FIN MODAL PAYTEF -->
 </template>
 
 <script>
@@ -75,6 +104,7 @@ export default {
         const toast = useToast();
         const vid = ref('');
         const pid = ref('');
+        const ipPaytef = ref('');
 
         function descargarClientesFinales() {
             axios.post('clientes/descargarClientesFinales').then((res) => {
@@ -122,6 +152,18 @@ export default {
                 toast.error("Error guardarCambiosImpresora CATCH");
             });
         }
+        function guardarCambiosPaytef() {
+            axios.post('parametros/setIpPaytef', { ip: ipPaytef.value }).then((res) => {
+                if (res.data.error == false) {
+                    toast.success('Cambios guardados');
+                } else {
+                    toast.error(res.data.mensaje);
+                }
+            }).catch((err) => {
+                console.log(err);
+                toast.error("Error guardarCambiosPaytef CATCH");
+            });
+        }
 
         function actualizarTrabajadores() {
             axios.post('trabajadores/actualizarTrabajadores').then((res) => {
@@ -156,11 +198,24 @@ export default {
                 }
             }).catch((err) => {
                 console.log(err);
-                toast.error('Error get');
+                toast.error('Error getVidPid');
+            });
+
+            axios.get('parametros/getIpPaytef').then((res) => {
+                if (res.data.error == false) {
+                    ipPaytef.value = res.data.info;
+                } else {
+                    toast.error(res.data.mensaje);
+                }
+            }).catch((err) => {
+                console.log(err);
+                toast.error('Error getIpPaytef');
             });
         });
 
         return {
+            guardarCambiosPaytef,
+            ipPaytef,
             actualizarTrabajadores,
             imprimirTest,
             guardarCambiosImpresora,
