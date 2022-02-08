@@ -9,7 +9,7 @@
               <th scope="col">Número ticket</th>
               <th scope="col">Hora</th>
               <th scope="col">Forma de pago</th>
-              <th scope="col">Total ({{total.toFixed(2)}} €)</th>
+              <th scope="col">Total</th>
             </tr>
           </thead>
           <tbody>
