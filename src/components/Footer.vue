@@ -559,7 +559,7 @@ export default {
         }
       }).catch((err) => {
         console.log(err);
-        toast.error('Error. Comprobar consola');
+        toast.error('Error. Comprobar consola.');
       });
     }
     function cerrarModal() {
