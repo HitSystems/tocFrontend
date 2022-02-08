@@ -135,6 +135,12 @@
       </div>
       <div class="row me-1 mt-1">
         <button
+          class="btn btn-secondary w-100 botonesPrincipales menusColorIvan mb-1">
+          <span style="font-size: 14px;">
+          {{ cesta.nombreCesta && cesta.nombreCesta.split(' ')[0] === 'Trabajador' ? nombreTrabajador : cesta.nombreCesta }}
+          </span>
+        </button>
+        <button
           class="btn btn-secondary w-100 botonesPrincipales menusColorIvan">
           <i class="bi bi-bell-fill display-6"></i>
           <span style="font-size: 27px;"
@@ -263,6 +269,7 @@ export default {
     const conCliente = null;
     const unidades = computed(() => store.state.unidades);
     const trabajadorActivo = computed(() => store.state.Trabajadores.trabajadorActivo);
+    const nombreTrabajador = ref('');
     const arrayTrabajadores = ref([]);
     const menuActivo = computed(() => store.state.Footer.menuActivo);
     const modoActual = computed(() => store.state.modoActual);
@@ -503,6 +510,9 @@ export default {
           toast.error(res.data.mensaje);
         }
       });
+      axios.post('/trabajadores/getCurrentTrabajador').then((res) => {
+        nombreTrabajador.value = res.data.trabajador.nombre;
+      })
 
       
     });
@@ -585,7 +595,7 @@ export default {
     }
 
     function showMenu() {
-      router.push('/menu/caja');
+      router.push('/menu/caja/tickets');
     }
 
     return {
@@ -623,6 +633,7 @@ export default {
       selectSuplemento,
       checkSuplementoActivo,
       addSuplemento,
+      nombreTrabajador,
     };
   },
   components: {

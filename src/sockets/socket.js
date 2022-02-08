@@ -1,5 +1,5 @@
 const io = require('socket.io-client');
-//const socket = io('http://localhost:3000'); // BUILD PARA TPV
+// const socket = io('http://localhost:3000'); // BUILD PARA TPV
 const socket = io('http://54.74.52.150:3000'); // BUILD PARA SERVIDOR
 import store from '../store/index';
 import router from '../router/index';

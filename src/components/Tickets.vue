@@ -1,48 +1,48 @@
-<template v-if='true'>
-  <div class="row ms-4 align-items-center">
-    <div class="row">
-      <!-- <div class="col">
-        <button
-        @click="goTo('/abrirCaja')"
-        type="button" class="btn btn-secondary
-          botonesPrincipales w-100 btn-block botonesWidth"><i class="bi bi-unlock-fill iconosBootstrap"></i>
-        </button>
-      </div> -->
-      <div class="col">
-        <router-link to="/menu/caja/tickets" class="btn btn-secondary
-          botonesPrincipales w-100 btn-block botonesWidth">
-          <!-- <i class="bi bi-box-arrow-right iconosBootstrap"></i> -->
-          Tickets
-        </router-link>
-      </div>
-      <div class="col">
-        <router-link to="/menu/caja/salida" class="btn btn-secondary
-          botonesPrincipales w-100 btn-block botonesWidth">
-          <!-- <i class="bi bi-box-arrow-right iconosBootstrap"></i> -->
-          Salida de dinero
-        </router-link>
-      </div>
-      <div class="col">
-        <router-link to="/menu/caja/entrada" class="btn btn-secondary
-          botonesPrincipales w-100 btn-block botonesWidth">
-          <!-- <i class="bi bi-box-arrow-in-right iconosBootstrap"></i> -->
-          Entrada de dinero
-        </router-link>
-      </div>
-      <div class="col">
-        <router-link to="/menu/caja/cerrar-caja" class="btn btn-secondary
-          botonesPrincipales w-100 h-100 btn-block botonesWidth">
-          <!-- <i class="bi bi-lock-fill iconosBootstrap"></i> -->
-          Cerrar caja
-        </router-link>
+<template>
+    <div class="col">
+      <br />
+      <div class="row">
+        <div class="table-responsive">
+        <table class="table">
+          <thead>
+            <tr>
+              <th scope="col">Número ticket</th>
+              <th scope="col">Hora</th>
+              <th scope="col">Forma de pago</th>
+              <th scope="col">Total ({{total.toFixed(2)}} €)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="(item, index) of listaTickets.slice().reverse()" v-bind:key={index}
+            @click="setTicketActivo(item)"
+            v-bind:class="{estiloActivoTicketCaja: item._id === activo}"
+            >
+                <td style="text-align: center">{{item._id}}</td>
+                <td>
+                  {{moment.unix(item.timestamp / 1000).format('DD/MM/YYYY hh:mm:ss')}}
+                  </td>
+                <td>{{item.tipoPago}}</td>
+                <td>{{item.total.toFixed(2)}} €</td>
+            </tr>
+          </tbody>
+        </table>
+        </div>
       </div>
     </div>
-    <div class='row'>
-      <router-view></router-view>
+    <div v-if="ticketInfo != null" class="col">
+      <DetalleTicket :ticket="ticketInfo" />
+      <div class='row'>
+        <div class="col">
+            <button
+            @click="imprimirTicket()"
+            type="button" class="btn btn-secondary
+            botonesPrincipales w-100 btn-block botonesWidth">
+                <i class="bi bi-printer-fill iconosBootstrap"></i>
+            </button>
+        </div>
+      </div>
     </div>
-  </div>
 </template>
-
 <script>
 import { ref, onMounted, computed } from 'vue';
 import DetalleTicket from '@/components/DetalleTicket.vue';
@@ -64,6 +64,7 @@ export default {
     const store = useStore();
 
     function setTicketActivo(ticket, mounted = false) {
+        console.log(ticket);
       if(mounted) ticket = listaTickets.value[listaTickets.value.length-1];
       ticketInfo.value = ticket;
       activo.value = ticket._id;
@@ -104,6 +105,9 @@ export default {
     };
     /* FINAL SETUP */
   },
+  components: {
+      DetalleTicket,
+  }
 };
 </script>
 <style scoped>

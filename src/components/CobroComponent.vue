@@ -449,7 +449,10 @@ export default {
 
     function enviarACocina() {
       axios.post('cestas/enviarACocina', { idCesta: cestaID.value }).then((res) => {
-        if(!res.error) toast.success('OK.')
+        if(!res.error) {
+          toast.success('OK.');
+          volver();
+        }
         else toast.error('Error al enviar el pedido a cocina.')
       })
     }

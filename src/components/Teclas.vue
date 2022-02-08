@@ -10,7 +10,7 @@
       <template v-if="listaMenus.length <= 11">
         <template v-if='showBackButton'>
           <div v-for="(item, index) of listaMenus" :key="item.nomMenu" @click="clickMenu(index)" class="col colJuntitasMenus subMenus" style="padding-left: 4px;">
-            <button class="btn btn-secondary w-100 subMenus menusColorIvan colorMenus" v-bind:class="[{'activo' : esActivo(index)}]">
+            <button class="btn btn-secondary w-100 subMenus menusColorIvan colorMenus" v-bind:class="[{'activo': esActivo(index)}]">
               {{item.nomMenu}}
             </button>
           </div>
@@ -749,14 +749,15 @@ export default {
   height: 70px;
 }
 .colorMenus {
-    background-color: #d45600;
-    color: #fffaee;
-    border-color: #d45600;
+    background-color: #fff5e9 !important;
+    color: #c95907 !important;
+    border-color: #bf5c18 !important;
 }
 .activo {
-    background-color: #fff5e9;
-    color: #c95907;
-    border-color: #bf5c18;
+    
+    background-color: #d45600 !important;
+    color: #fffaee !important;
+    border-color: #d45600 !important;
 }
 .btn-secondary:hover {
     color: #c95907 !important;
@@ -764,9 +765,12 @@ export default {
     border-color: #bf5c18 !important;
   }
   .btn-secondary:focus, .btn-secondary.focus {
-    color: #c95907 !important;
+    /* color: #c95907 !important;
     background-color: #fff5e9 !important;
-    border-color: #bf5c18 !important;
+    border-color: #bf5c18 !important; */
+    background-color: #d45600 !important;
+    color: #fffaee !important;
+    border-color: #d45600 !important;
     box-shadow: none !important;
   }
   .btn-secondary.disabled, .btn-secondary:disabled {
@@ -777,9 +781,12 @@ export default {
   .btn-secondary:not(:disabled):not(.disabled):active,
   .btn-secondary:not(:disabled):not(.disabled).active,
   .show > .btn-secondary.dropdown-toggle {
-    color: #c95907 !important;
+    /* color: #c95907 !important;
     background-color: #fff5e9 !important;
-    border-color: #bf5c18 !important;
+    border-color: #bf5c18 !important; */
+    background-color: #d45600 !important;
+    color: #fffaee !important;
+    border-color: #d45600 !important;
   }
   .btn-secondary:not(:disabled):not(.disabled):active:focus,
   .btn-secondary:not(:disabled):not(.disabled).active:focus

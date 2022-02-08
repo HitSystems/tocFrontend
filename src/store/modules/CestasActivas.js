@@ -9,9 +9,7 @@ export default {
       },
       deleteCestaActivaMutation(state, payload) {
         const index = state.cestas.findIndex(i => i.idMongo === payload);
-        console.log('Nombre', state.cestas[index]);
         if(state.cestas[index] !== undefined && state.cestas[index].nombre.split(' ')[0] === 'Taula') {
-          console.log('Entro por aqui');
           state.cestas.splice(index, 1);
         }
       },

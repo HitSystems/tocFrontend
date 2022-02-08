@@ -124,7 +124,7 @@
       </div>
     </div>
     
-    <div class="input-group position-absolute bottom-0 start-0 mb-4 ms-2">
+    <div class="input-group  start-0 mb-4 mt-5">
       <button class="btn btn-danger ms-2" style="font-size: 27px;"
         @click="resetTodo()">
         RESET LIMPIAR TODO
