@@ -55,6 +55,9 @@
   </div>
 
   <div class="position-absolute bottom-0 end-0 me-2">
+
+      <button type="button" class="btn btn-success botones me-4"
+      @click="irAVentas()"> Menú ventas </button>
       <button type="button" class="btn btn-primary botones me-2"
       @click="confirmar()"> Confirmar </button>
       <button type="button" class="btn btn-danger botones"
@@ -139,11 +142,16 @@ export default {
       }
     }
 
+    function irAVentas() {
+      router.push('/');
+    }
+
     // onMounted(() => {
     //   store.dispatch('InstallWizard/setModal');
     // });
 
     return {
+      irAVentas,
       primeraParte,
       segundaParte,
       testPrint,
