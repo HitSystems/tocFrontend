@@ -14,6 +14,11 @@ const routes = [
     component: () => import('../views/Cobro.vue'),
   },
   {
+    path: '/menuResponsable',
+    name: 'Menu Responsable',
+    component: () => import('../views/MenuResponsableTienda.vue'),
+  },
+  {
     path: '/installWizard',
     name: 'InstallWizard',
     component: () => import('../views/InstallWizard.vue'),

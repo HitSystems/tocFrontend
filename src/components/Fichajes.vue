@@ -4,15 +4,30 @@
             <div class='row ms-3'>
                 <div class="card cardWidth">
                     <div class="card-body" style='text-align: center;'>
-                        <span><i class="bi bi-door-open"></i></span>
+                        <span><i class="bi bi-fingerprint"></i></span>
                         <a href="#" class="btn btn-primary" @click="abrirModal()">Fichaje</a>
                     </div>
                 </div>
+
+<!-- <div class="card" style="width: 18rem;">
+  <img src="/fingerprint.svg" class="card-img-top mt-1" height="80" alt="...">
+  <div class="card-body">
+    <h5 class="card-title">Fichajes</h5>
+    <p class="card-text">RegistroEntrada y salida para los trabajadores</p>
+    <a href="#" class="btn btn-primary">Go somewhere</a>
+  </div>
+</div> -->
 
                 <div class="card cardWidth">
                     <div class="card-body" style='text-align: center;'>
                         <span><i class="bi bi-cup-straw"></i></span>
                         <button @click="consumoPersonal()" class="btn btn-primary">Consumo personal</button>
+                    </div>
+                </div>
+                <div class="card cardWidth">
+                    <div class="card-body" style='text-align: center;'>
+                        <span><i class="bi bi-file-earmark-lock"></i></span>
+                        <button @click="abrirModalPassword()" class="btn btn-primary">Menú responsable</button>
                     </div>
                 </div>
             </div>
@@ -101,6 +116,35 @@
         </div>
     </div>
 
+    <!-- MODAL PASSWORD -->
+    <div class="modal fade" id="modalPassword" tabindex="-1">
+        <div class="modal-dialog" style="max-width: 700px">
+            <div class="modal-content">
+            <form @submit.prevent="goToMenuResponsable()">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Ingresa la contraseña</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col">
+                                <div class="mb-3">
+                                    <label class="form-label">Contraseña</label>
+                                    <input type="password" minlength="3" maxlength="20" class="form-control" v-model="password">
+                                </div>
+                            
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="submit" class="btn btn-success" data-bs-dismiss="modal">Confirmar</button>
+                </div>
+            </form>
+            </div>
+        </div>
+    </div>
+
 </template>
 <script>
 import { Modal } from 'bootstrap';
@@ -109,6 +153,7 @@ import axios from 'axios';
 import { useStore } from 'vuex';
 import router from '../router/index';
 import { useToast } from 'vue-toastification';
+const sha1 = require('sha-1');
 
 export default {
     name: 'Dependientas',
@@ -118,13 +163,24 @@ export default {
         const nombre = 'Santy';
         const id = 156;
         let modalFichajes = null;
+        let modalPassword = null;
         const arrayTrabajadores = ref([]);
         const inputBusqueda = ref('');
         const toast = useToast();
         const arrayPlanes = ref([]);
+        const password = ref('');
 
         function test() {
             console.log("El selected es: ", idPlanificacion.value);
+        }
+
+        async function goToMenuResponsable() {
+            const hash = await sha1(password.value);
+            if (hash == '4cd914fef37199909adb4c0ba5e31439429995c4') {
+                router.push('/menuResponsable');
+            } else {
+                toast.error("Contraseña incorrecta");
+            }
         }
 
         function abrirModal() {
@@ -134,6 +190,9 @@ export default {
                 console.log(err);
                 modalFichajes.show();
             });            
+        }
+        function abrirModalPassword() {
+            modalPassword.show();
         }
 
         function cerrarModal() {
@@ -210,6 +269,9 @@ export default {
             modalFichajes = new Modal(document.getElementById('modalFichajes'), {
                 keyboard: false,
             });
+            modalPassword = new Modal(document.getElementById('modalPassword'), {
+                keyboard: false,
+            });
             axios.get('turnos/getPlanes').then((res) => {
                 if (res.data.error == false) {
                     arrayPlanes.value = res.data.info;
@@ -223,6 +285,9 @@ export default {
         });
 
         return {
+            goToMenuResponsable,
+            abrirModalPassword,
+            password,
             test,
             arrayPlanes,
             idPlanificacion,

@@ -19,6 +19,7 @@
           <select v-model="tipoDatafono" class="form-select form-select-lg mb-3">
               <option selected value="CLEARONE">CLEARONE</option>
               <option value="3G">3G</option>
+              <option value="PAYTEF">PAYTEF</option>
           </select>
       </div>
     </div>
