@@ -144,15 +144,23 @@
     tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary w-100"
-            style="font-size: 40px"
-            data-bs-dismiss="modal">Cancelar</button>
-          <button type="button"
-            @click="cerrarCaja()"
-            class="btn btn-success w-100" style="font-size: 40px">
-          Confirmar
-          </button>
+        <div class="modal-body">
+          <div class="row">
+            <div class="col">
+              <label class="form-label">Cantidad datáfono del banco (3G)</label>
+              <input type="number" v-model="cantidad3G" class="form-control total3GInput">
+            </div>
+          </div>
+          <div class="row mt-2">
+            <button type="button" class="btn btn-secondary w-100"
+              style="font-size: 40px"
+              data-bs-dismiss="modal">Cancelar</button>
+            <button type="button"
+              @click="cerrarCaja()"
+              class="btn btn-success w-100 mt-2" style="font-size: 40px">
+            Confirmar
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -172,6 +180,7 @@ export default {
     const toast = useToast();
     const store = useStore();
     const cajaAbierta = computed(() => store.state.Caja.cajaAbierta);
+    const valor3G = ref(0);
     const infoDinero = ref([
       { valor: 0, style: '' },
       { valor: 0, style: '' },
@@ -272,12 +281,16 @@ export default {
       cantidad3G.value = 0;
     }
 
-    function cerrarCaja() {
+    function sistemaIngles(x) {
+
+    }
+
+    function cerrarCajaReal() {
       axios.post('/caja/cerrarCaja', {
         total: getTotal.value,
         detalle: getDetalle.value,
         infoDinero: infoDinero.value,
-        cantidad3G: 0
+        cantidad3G: cantidad3G.value
       }).then((res) => {
         if (!res.data.error) {
           console.log('Cerrar caja OK');
@@ -293,6 +306,16 @@ export default {
         console.log(err);
         toast.error('Error en el cierre de caja. Contacta con informática');
       });
+    }
+
+    function cerrarCaja() {
+      if (cantidad3G.value == 0) {
+        if (confirm("Has marcado 0 € de datáfono de banco (3G), ¿Estás segur@?")) {
+          cerrarCajaReal();
+        }
+      } else {
+        cerrarCajaReal();
+      }
     }
 
     function borrarNumero() {
@@ -316,6 +339,7 @@ export default {
     });
 
     return {
+      valor3G,
       volver,
       infoDinero,
       activo,
@@ -355,5 +379,9 @@ export default {
   }
   .unidadesSize {
     font-size: 25px;
+  }
+
+  .total3GInput {
+    font-size: 2rem;
   }
 </style>

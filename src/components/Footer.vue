@@ -437,6 +437,9 @@ export default {
         }
         if (modoActual == 'DEVOLUCION') {
           crearDevolucion(Number(getTotal.value), idCesta);
+          axios.post('promociones/setEstadoPromociones', {
+            estadoPromociones: true
+          });
         }
 
         if (modoActual == 'CONSUMO PERSONAL') {

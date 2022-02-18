@@ -23,6 +23,7 @@ import Footer from './modules/Footer';
 import socket from '../sockets/socket';
 
 import Caja from './modules/Caja';
+import axios from 'axios';
 
 let timeoutBorrar = null;
 
@@ -75,6 +76,11 @@ export default createStore({
       commit('setEsperandoDatafonoMutation', payload);
     },
     setModoActual({ commit }, payload) {
+      if (payload == 'DEVOLUCION') {
+        axios.post('promociones/setEstadoPromociones', {
+          estadoPromociones: false
+        });
+      }
       commit('setModoActualMutation', payload);
     },
     setParametros({ commit }, payload) {

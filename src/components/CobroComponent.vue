@@ -453,6 +453,9 @@ export default {
       store.dispatch('setModoActual', 'NORMAL');
       store.dispatch('Clientes/resetClienteActivo');
       store.dispatch('Footer/resetMenuActivo');
+      axios.post('promociones/setEstadoPromociones', {
+        estadoPromociones: true
+      });
     }
 
     function test() {
