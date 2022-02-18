@@ -220,7 +220,7 @@ export default {
             });
         }
 
-        function fichar(trabajador, index) {
+        function ficharReal(trabajador, index) {
             axios.post('trabajadores/fichar', { idTrabajador: trabajador.idTrabajador, idPlan: idPlanificacion.value }).then((res) => {
                 if (!res.data.error) {
                     arrayTrabajadores.value[index].fichado = true;
@@ -234,6 +234,16 @@ export default {
             }).catch((err) => {
                 console.log(err);
             });
+        }
+
+        function fichar(trabajador, index) {
+            if (idPlanificacion.value == 'SIN_TURNO') {
+                if (confirm("No has seleccionado turno. ¿CONTINUAR?")) {
+                    ficharReal(trabajador, index);
+                }
+            } else {
+                ficharReal(trabajador, index);
+            }
         }
 
         function actualizarLista() {
