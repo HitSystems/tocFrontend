@@ -9,6 +9,7 @@
 import { computed, onMounted, ref } from 'vue';
 import { useStore } from 'vuex';
 import axios from 'axios';
+import router from '../router/index';
 
 export default {
     name: 'Trabajador',
@@ -25,6 +26,7 @@ export default {
                     store.dispatch('Trabajadores/setTrabajadorActivo', id);
                     store.dispatch('Cesta/setIdAction', id.toString());
                     getFichados();
+                    router.push('/');
                 } else {
                     console.log('Error al cambiar trabajador activo');
                 }

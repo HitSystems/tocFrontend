@@ -127,7 +127,8 @@ export default {
 
     function imprimirEntregas() {
       // const licencia = this.getNumeroTresDigitos(this.getParametros().licencia);
-      const licencia = 842;
+      const licencia = params.codigoTienda;
+      console.log(`http://dsv.hiterp.com/TpvInforma.asp?Llic=00${licencia}&Versio=6001010&Tipus=EntregasPendientes`)
       axios.get(`http://dsv.hiterp.com/TpvInforma.asp?Llic=00${licencia}&Versio=6001010&Tipus=EntregasPendientes`).then((response) => {
         const { data } = response;
         let imprimir = '';

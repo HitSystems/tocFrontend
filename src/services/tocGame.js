@@ -1,6 +1,6 @@
 import axios from "axios";
-// const baseURL = 'http://localhost:3000/';
-const baseURL = 'http://63.35.219.5:3000/';
+const baseURL = 'http://localhost:3000/';
+// const baseURL = 'http://54.195.159.7:3030/';
 // const baseURL = 'http://10.137.0.201:3000';
 
 class tocGameV3 {
@@ -8,7 +8,6 @@ class tocGameV3 {
 
     constructor() {
         axios.post(baseURL + 'parametros/getParametros').then((res) => {
-            console.log('HOAGDSFHBASDJKbFJKASdHf', res);
             if (res.data.error === false) {
                 this.parametros = res.data.parametros;
             } else {
