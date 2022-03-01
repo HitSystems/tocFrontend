@@ -54,6 +54,14 @@
             <i class="bi bi-key iconosBootstrap me-3"></i>
           </div>
         </router-link>
+        <router-link
+        to="/menu/administracion"
+        class="list-group-item list-group-item-action py-3 lh-tight">
+          <div class="d-flex w-100 align-items-center justify-content-center">
+            <!-- <img src='../assets/tecnico.png' class='img_size' /> -->
+            <i class="bi bi-key iconosBootstrap me-3"></i>
+          </div>
+        </router-link>
         <!-- TRABAJADORES FICHADOS -->
         <Trabajador />
         <!-- CESTAS ACTIVAS -->

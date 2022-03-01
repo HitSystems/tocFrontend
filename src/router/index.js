@@ -81,6 +81,11 @@ const routes = [
         path: 'entregas',
         component: () => import('../components/Entregas.vue'),
       },
+      {
+        path: 'administracion',
+        name:'administracion',
+        component: () => import('../components/Administracion.vue'),
+      },
     ],
   },
   {

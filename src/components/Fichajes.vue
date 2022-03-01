@@ -51,7 +51,7 @@
             </div>
         </div>
         <div class="modal-footer">
-            <button type="button" class="btn btn-secondary btn-lg" data-bs-dismiss="modal">Cerrar</button>
+            <button type="button" class="btn btn-secondary btn-lg" data-bs-dismiss="modal" @click="router.push('/')">Cerrar</button>
         </div>
         </div>
     </div>
@@ -141,6 +141,7 @@ export default {
             abrirModal,
             nombre,
             id,
+            router,
         };
     },
 };

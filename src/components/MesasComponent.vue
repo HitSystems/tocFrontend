@@ -5,7 +5,7 @@
                 <!-- v-bind:class="[{'cardMesa': findMesa(j, i).activada, 'cardMesaDisabled': !findMesa(j, i).activada}]" -->
                 <div class='mesaGeneral cardMesa' @click='seleccionarCesta(findMesa(j, i))' v-bind:class="[{'enUso': findMesa(j, i).enUso}]">
                     <p>{{findMesa(j, i).nombre}}</p>
-                    <p>{{findMesa(j, i).total.toFixed(2)}}</p>
+                    <p>{{parseInt(findMesa(j, i).total).toFixed(2)}}</p>
                 </div>
             </div>
         </div> 

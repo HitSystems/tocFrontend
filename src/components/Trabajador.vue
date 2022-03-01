@@ -1,5 +1,5 @@
 <template>
-    <div class='btn mb-3' v-bind:class="[{'btn-info': esActivo(trabajador.idTrabajador), 'btn-outline-info': !esActivo(trabajador.idTrabajador)}]"
+    <div class='btn mb-3' v-bind:class="[{'btn-color': esActivo(trabajador.idTrabajador), 'btn-outline-color': !esActivo(trabajador.idTrabajador)}]"
     v-for='(trabajador, index) in arrayTrabajadores' :key='index'
     @click='changeActivo(trabajador.idTrabajador)'>
         {{trabajador.nombre}}
@@ -71,5 +71,17 @@ export default {
 }
 </script>
 <style scoped>
+.btn-color {
+    background-color: #c95907;
+    color: white;
+}
+.btn-outline-color {
+    border-color: #c95907;
+    color: #c95907;
+}
+.btn-outline-color:hover {
+    background-color: #c95907;
+    color: white;
+}
 </style>
   

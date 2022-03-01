@@ -43,7 +43,8 @@
               <button v-bind:id="listadoTeclas[(index-1)*6+(index2-1)].idBoton"
               class="btn btn-primary rounded-0 w-100 teclas"
               v-bind:class="[listadoTeclas[(index-1)*6+(index2-1)].color,
-              {'invisible': listadoTeclas[(index-1)*6+(index2-1)].idArticle == -1}]"
+              {'invisible': listadoTeclas[(index-1)*6+(index2-1)].idArticle == -1 && !isEditarArticulos(listadoTeclas[(index-1)*6+(index2-1)].idArticle)},
+              {'editarArticulos': isEditarArticulos(listadoTeclas[(index-1)*6+(index2-1)].idArticle)}]"
               @click="clickTecla(listadoTeclas[(index-1)*6+(index2-1)]);
                mostrarInfoVisor(listadoTeclas[(index-1)*6+(index2-1)]);"
               v-on:contextmenu="abrirFicha(listadoTeclas[(index-1)*6+(index2-1)].idArticle)"
@@ -56,7 +57,8 @@
               <button v-bind:id="listadoTeclas[(index-1)*6+(index2-1)].idBoton"
               class="btn btn-primary rounded-0 w-100 teclas"
               v-bind:class="[listadoTeclas[(index-1)*6+(index2-1)].color,
-              {'invisible': listadoTeclas[(index-1)*6+(index2-1)].idArticle == -1}]"
+              {'invisible': listadoTeclas[(index-1)*6+(index2-1)].idArticle == -1 && !isEditarArticulos(listadoTeclas[(index-1)*6+(index2-1)].idArticle)},
+              {'editarArticulos': isEditarArticulos(listadoTeclas[(index-1)*6+(index2-1)].idArticle)}]"
               @click="clickTecla(listadoTeclas[(index-1)*6+(index2-1)]);
               mostrarInfoVisor(listadoTeclas[(index-1)*6+(index2-1)]);"
               v-on:contextmenu="abrirFicha(listadoTeclas[(index-1)*6+(index2-1)].idArticle)"
@@ -69,7 +71,8 @@
             <button v-bind:id="listadoTeclas[(index-1)*6+(index2-1)].idBoton"
             class="btn btn-primary rounded-0 w-100 teclas"
             v-bind:class="[listadoTeclas[(index-1)*6+(index2-1)].color,
-            {'invisible': listadoTeclas[(index-1)*6+(index2-1)].idArticle == -1}]"
+            {'invisible': listadoTeclas[(index-1)*6+(index2-1)].idArticle == -1 && !isEditarArticulos(listadoTeclas[(index-1)*6+(index2-1)].idArticle)},
+            {'editarArticulos': isEditarArticulos(listadoTeclas[(index-1)*6+(index2-1)].idArticle)}]"
             @click="modalesSumable(listadoTeclas[(index-1)*6+(index2-1)],
             listadoTeclas[(index-1)*6+(index2-1)].idBoton);
             mostrarInfoVisor(listadoTeclas[(index-1)*6+(index2-1)])"
@@ -151,7 +154,7 @@ export default {
     let suplementos = ref([]);
     //let suplementosSeleccionados = computed(() => store.state.Suplementos.suplementosSeleccionados);
     let suplementosSeleccionados = ref([]);
-
+    const modoActual = computed(() => store.state.modoActual);
     function cerrarModal(borrarItem = false) {
       if(borrarItem) {
         axios.post('/cestas/borrarItemCesta', { _id: cesta.value._id, idArticulo, idArticulo }).then((res) => {
@@ -547,6 +550,14 @@ export default {
 
     function clickTecla(objListadoTeclas) {
       idArticulo = objListadoTeclas.idArticle;
+      if(modoActual.value === 'MODIFICAR_ARTICULO') {
+        if(idArticulo === -1) {
+          
+        } else {
+
+        }
+        return;
+      }
       axios.post('cestas/clickTeclaArticulo', {
         idArticulo: objListadoTeclas.idArticle,
         idBoton: objListadoTeclas.idBoton,
@@ -640,7 +651,9 @@ export default {
       })
     }
     getSubmenus();
-
+    function isEditarArticulos(index) {
+      return modoActual.value === 'MODIFICAR_ARTICULO' && index === -1 ? true : false;
+    }
     onMounted(() => {
       modalSuplementos = new Modal(document.getElementById('modalSuplementos'), {
         keyboard: false,
@@ -688,6 +701,7 @@ export default {
       suplementosSeleccionados,
       selectSuplemento,
       checkSuplementoActivo,
+      isEditarArticulos,
     };
     /* FINAL SETUP */
   },
@@ -806,5 +820,9 @@ export default {
   }
   .btnSuplemento:focus, .btnSuplemento:active {
     box-shadow: none !important;
+  }
+  .editarArticulos {
+    background-color: #c95807a4 !important;
+    border-color: transparent !important;
   }
 </style>

@@ -59,6 +59,7 @@
       <p v-if="modoActual == 'CONSUMO PERSONAL'" class="estiloConsumoPersonal">CONSUMO</p>
       <p v-if="modoActual == 'CONSUMO PERSONAL'" class="estiloConsumoPersonal">PERSONAL</p>
       <p v-if="modoActual == 'DEVOLUCION'" class="tipoDevolucion">{{modoActual}}</p>
+      <p v-if="modoActual == 'MODIFICAR_ARTICULO'" class="tipoDevolucion">EDITAR ARTÍCULOS</p>
       <p v-if="modoActual == 'NORMAL'" class="tipoNormal">{{modoActual}}</p>
       <p v-if="modoActual == 'CLIENTE'" class="infoCliente">
         {{infoCliente.puntos}} puntos
@@ -498,13 +499,14 @@ export default {
         backdrop: 'static',
       });
       /* SET MODO ACTUAL */
-      if (modoActual.value == 'DEVOLUCION' || modoActual.value == 'CLIENTE') {
+      if (modoActual.value == 'DEVOLUCION' || modoActual.value == 'CLIENTE' || modoActual.value === 'MODIFICAR_ARTICULO') {
         store.dispatch('Footer/setMenuActivo', 1);
       }
       console.log('Getter', store.getters['Trabajadores/getTrabajadorActivo']);
       /* INICIALIZACIÓN DE CESTA */
       axios.post('/cestas/getCestaByID', { idCesta: store.getters['Cesta/getCestaId'] }).then((res) => {
         if (res.data.error == false) {
+          console.log(res.data.info)
           store.dispatch('Cesta/setCestaAction', res.data.info);
         } else {
           toast.error(res.data.mensaje);
