@@ -59,6 +59,7 @@
       <p v-if="modoActual == 'CONSUMO PERSONAL'" class="estiloConsumoPersonal">CONSUMO</p>
       <p v-if="modoActual == 'CONSUMO PERSONAL'" class="estiloConsumoPersonal">PERSONAL</p>
       <p v-if="modoActual == 'DEVOLUCION'" class="tipoDevolucion">{{modoActual}}</p>
+      <p v-if="modoActual == 'MODIFICAR_ARTICULO'" class="tipoDevolucion">EDITAR ARTÍCULOS</p>
       <p v-if="modoActual == 'NORMAL'" class="tipoNormal">{{modoActual}}</p>
       <p v-if="modoActual == 'CLIENTE'" class="infoCliente">
         {{infoCliente.puntos}} puntos
@@ -127,13 +128,19 @@
     </div>
     <div class="col">
       <div class="row me-1">
-        <select @change="cambioActivo()" class="form-select" v-model="trabajadorActivo">
+        <!--<select @change="cambioActivo()" class="form-select" v-model="trabajadorActivo">
           <option v-for="(trabajador, index) in arrayTrabajadores" v-bind:key="index">
             {{trabajador.nombre}}
           </option>
-        </select>
+        </select>-->
       </div>
       <div class="row me-1 mt-1">
+        <button
+          class="btn btn-secondary w-100 botonesPrincipales menusColorIvan mb-1">
+          <span style="font-size: 14px;">
+          {{ cesta.nombreCesta && cesta.nombreCesta.split(' ')[0] === 'Trabajador' ? nombreTrabajador : cesta.nombreCesta }}
+          </span>
+        </button>
         <button
           class="btn btn-secondary w-100 botonesPrincipales menusColorIvan">
           <i class="bi bi-bell-fill display-6"></i>
@@ -212,8 +219,32 @@
       </div>
     </div>
   </div>
+  <!-- MODAL SUPLEMENTOS -->
+  <div class="modal fade" id="modalSuplementosModificar" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Modificar suplementos</h5>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                <div v-for='(item, index) of suplementos' :key='index' class='col mb-3'>
+                  <button class='btn w-100 h-100 colorIvan1 btnSuplemento' @click="selectSuplemento(item._id)" v-bind:class="[{'suplementoActivo': checkSuplementoActivo(item._id)}]">
+                    {{item.nombre}}
+                    <br />
+                    {{item.precioBase}} €
+                  </button>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary btn-lg colorIvan4" @click="addSuplemento()">OK</button>
+        </div>
+        </div>
+    </div>
+  </div>
   <div style="position:fixed; bottom: 2px; left: 2px;">
-    <span style="font-weight: bold">(v{{tocVersion}}) ({{nombreTienda}})</span>
+    <span style="font-weight: bold">(v{{tocVersion}})  ({{nombreTienda}})</span>
   </div>
 </template>
 
@@ -226,21 +257,23 @@ import { useStore } from 'vuex';
 
 import MenuClientes from '@/components/MenuClientes.vue'; // @ is an alias to /src
 import { useToast } from "vue-toastification";
+import { Modal } from 'bootstrap';
 import router from '../router/index';
 
 export default {
   name: 'Footer',
   setup() {
     const toast = useToast();
-    const store = useStore();
     const tocVersion = ref('');
     const nombreTienda = ref('');
+    const store = useStore();
     const cesta = computed(() => store.state.Cesta.cesta);
     const activo = computed(() => store.state.Cesta.activo);
     const notificaciones = computed(() => store.state.Notificaciones.cantidad);
     const conCliente = null;
     const unidades = computed(() => store.state.unidades);
-    const trabajadorActivo = ref('');
+    const trabajadorActivo = computed(() => store.state.Trabajadores.trabajadorActivo);
+    const nombreTrabajador = ref('');
     const arrayTrabajadores = ref([]);
     const menuActivo = computed(() => store.state.Footer.menuActivo);
     const modoActual = computed(() => store.state.modoActual);
@@ -251,6 +284,10 @@ export default {
 
     let inicioMagic = null;
     let finalMagic = null;
+
+    let modalSuplementos = null;
+    let suplementos = ref([]);
+    let suplementosSeleccionados = ref([]);
 
     function touchStart() {
       inicioMagic = new Date();
@@ -321,7 +358,7 @@ export default {
           suma += cesta.value.lista[i].subtotal;
         }
       }
-      return String(Math.round(suma*100)/100);
+      return suma.toFixed(2);
     });
     const cestaAlReves = computed(() => {
       const aux = cesta.value.lista; // Reverse muta el array.
@@ -437,9 +474,6 @@ export default {
         }
         if (modoActual == 'DEVOLUCION') {
           crearDevolucion(Number(getTotal.value), idCesta);
-          axios.post('promociones/setEstadoPromociones', {
-            estadoPromociones: true
-          });
         }
 
         if (modoActual == 'CONSUMO PERSONAL') {
@@ -463,60 +497,90 @@ export default {
     }
 
     onMounted(() => {
-      /* Get toc version from package.json */
       axios.get('getInfo/tocGame').then((res) => {
-        if (res.data != undefined || res.data != null) {
+        if (res.data != undefined && res.data != null) {
           tocVersion.value = res.data.version;
           nombreTienda.value = res.data.nombreTienda;
         }
       }).catch((err) => {
         console.log(err);
-        toast.error('Error en getVersion catch');
-      });
+        toast.error('Error en getVersion CATCH');
+      })
 
+      modalSuplementos = new Modal(document.getElementById('modalSuplementosModificar'), {
+        keyboard: false,
+        backdrop: 'static',
+      });
       /* SET MODO ACTUAL */
-      if (modoActual.value == 'DEVOLUCION' || modoActual.value == 'CLIENTE') {
+      if (modoActual.value == 'DEVOLUCION' || modoActual.value == 'CLIENTE' || modoActual.value === 'MODIFICAR_ARTICULO') {
         store.dispatch('Footer/setMenuActivo', 1);
       }
 
       /* INICIALIZACIÓN DE CESTA */
       axios.post('/cestas/getCestaByID', { idCesta: store.getters['Cesta/getCestaId'] }).then((res) => {
         if (res.data.error == false) {
+          console.log(res.data.info)
           store.dispatch('Cesta/setCestaAction', res.data.info);
         } else {
-          toast.error(res.data.mensaje);
+            toast.error(res.data.mensaje);
         }
+      });
+      axios.post('/trabajadores/getCurrentTrabajador').then((res) => {
+        nombreTrabajador.value = res.data.trabajador.nombre;
+
+        store.dispatch('Trabajadores/setTrabajadorActivo', res.data.trabajador.idTrabajador);
       });
 
-      axios.post('trabajadores/getTrabajadoresFichados').then((info) => {
-        if(!info.data.error) {
-          if (info.data.res.length > 0) {
-            store.dispatch('Trabajadores/setArrayTrabajadores', info.data.res);
-            arrayTrabajadores.value = info.data.res;
-            axios.post('trabajadores/getCurrentTrabajador').then((infoTrabajador) => {
-              if (!infoTrabajador.data.error) {
-                trabajadorActivo.value = infoTrabajador.data.trabajador.nombre;
-                store.dispatch('Trabajadores/setTrabajadorActivo', infoTrabajador.data.trabajador.nombre);
-              } else {
-                console.log('Error en getCurrentTrabajador');
-              }
-            }).catch((err) => {
-              console.log(err);
-            });
-          } else {
-            // ENVIAR DIRECTAMENTE A FICHAR TRABAJADOR !!!
-          }
-        } else {
-          console.log('Error en getTrabajadoresFichados');
-        }
-      }).catch((err) => {
-        console.log(err);
-      });
+      
     });
 
     function setActivo(index) {
-      console.log(index);
+      if(activo.value === index) {
+        axios.post('/cestas/modificarSuplementos', { cestaId: store.getters['Cesta/getCestaId'], idArticulo: store.getters['Cesta/getItem'], posArticulo: index }).then((res) => {
+          if(res.data.suplementos) {
+            suplementos.value = res.data.suplementosData;
+            console.log("🚀 ~ file: Footer.vue ~ line 516 ~ axios.post ~ suplementos.value", suplementos.value)
+            for(let i = 0; i < res.data.suplementosSeleccionados.length; i++) {
+              selectSuplemento(res.data.suplementosSeleccionados[i]);
+            }
+            modalSuplementos.show();
+          }
+        }).catch((err) => {
+          console.log(err);
+        });
+      }
       store.dispatch('Cesta/setActivoAction', index);
+    }
+    function selectSuplemento(idSuplemento) {
+      const supl = suplementosSeleccionados.value.findIndex(o => o.suplemento === idSuplemento);
+      if(supl !== -1) {
+        suplementosSeleccionados.value.splice(supl, 1);
+        return;
+      }
+      suplementosSeleccionados.value.push({ suplemento: idSuplemento, activo: true });
+    }
+
+    function checkSuplementoActivo(idSuplemento) {
+      const s = suplementosSeleccionados.value.findIndex(o => o.suplemento === idSuplemento)
+      return s !== -1 ? true : false;
+    }
+    function addSuplemento() {
+      axios.post('cestas/addSuplemento', { idCesta: store.getters['Cesta/getCestaId'], suplementos: suplementosSeleccionados.value, idArticulo: store.getters['Cesta/getItem'], posArticulo: activo.value }).then((res) => {
+        if(!res.data.error && !res.data.bloqueado) {
+          store.dispatch('resetUnidades');
+          store.dispatch('Cesta/setCestaAction', res.data.cesta);
+          suplementosSeleccionados.value = [];
+          cerrarModal();
+        } else {
+          console.log('Error en clickSuplemento');
+        }
+      }).catch((err) => {
+        console.log(err);
+        toast.error('Error. Comprobar consola.');
+      });
+    }
+    function cerrarModal() {
+      modalSuplementos.hide();
     }
     function borrar() {
       if (activo.value === null) {
@@ -548,7 +612,7 @@ export default {
     }
 
     function showMenu() {
-      router.push('/menu/caja');
+      router.push('/menu/caja/tickets');
     }
 
     return {
@@ -583,6 +647,12 @@ export default {
       arrayTrabajadores,
       cambioActivo,
       goToCobrar,
+      cerrarModal,
+      suplementos,
+      selectSuplemento,
+      checkSuplementoActivo,
+      addSuplemento,
+      nombreTrabajador,
     };
   },
   components: {
@@ -710,5 +780,25 @@ export default {
 .unidadesStyle {
   font-size: 44px;
   font-weight: bold;
+}
+
+.suplementoActivo {
+  background-color: #FBB5B5 !important;
+}
+
+.btnSuplemento:focus, .btnSuplemento:active {
+  box-shadow: none !important;
+}
+
+.colorIvan3 {
+  background-color: #FBB5B5 !important;
+  color: #5E5F61 !important;
+  border-color: #FBB5B5 !important;
+}
+
+.colorIvan4 {
+  background-color: #DCE9D5 !important;
+  color: #5E5F61 !important;
+  border-color: #DCE9D5 !important;
 }
 </style>

@@ -47,6 +47,28 @@ const routes = [
         path: 'caja',
         name:'cajaMenu',
         component: () => import('../components/Caja.vue'),
+        children: [
+          {
+            path: 'tickets',
+            name:'tickets',
+            component: () => import('../components/Tickets.vue'),
+          },
+          {
+            path: 'salida',
+            name:'salidaDinero',
+            component: () => import('../components/SalidaDinero.vue'),
+          },
+          {
+            path: 'entrada',
+            name:'entradaDinero',
+            component: () => import('../components/EntradaDinero.vue'),
+          },
+          {
+            path: 'cerrar-caja',
+            name:'cerrarCaja',
+            component: () => import('../components/CerrarCaja.vue'),
+          },
+        ],
       },
       {
         path: 'fichajes',

@@ -21,7 +21,7 @@ import Clientes from './modules/Clientes';
 import Footer from './modules/Footer';
 
 import socket from '../sockets/socket';
-
+import CestasActivas from './modules/CestasActivas';
 import Caja from './modules/Caja';
 import axios from 'axios';
 
@@ -108,5 +108,6 @@ export default createStore({
     Clientes,
     Caja,
     Footer,
+    CestasActivas
   },
 });

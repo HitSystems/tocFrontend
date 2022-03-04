@@ -124,7 +124,7 @@
       </div>
     </div>
     
-    <div class="input-group position-absolute bottom-0 start-0 mb-4 ms-2">
+    <div class="input-group  start-0 mb-4 mt-5">
       <button class="btn btn-danger ms-2" style="font-size: 27px;"
         @click="resetTodo()">
         RESET LIMPIAR TODO
@@ -310,7 +310,7 @@ export default {
 
     function cerrarCaja() {
       if (cantidad3G.value == 0) {
-        if (confirm("Has marcado 0 € de datáfono de banco (3G), ¿Estás segur@?")) {
+        if (1==1) { //confirm("Has marcado 0 € de datáfono de banco (3G), ¿Estás segur@?")) {
           cerrarCajaReal();
         }
       } else {

@@ -8,7 +8,7 @@
       </div>
     </template>
     <template v-else class="scrollmenu">
-      <div class="scrollmenu" style="-webkit-transform: translateZ(0); ">
+      <div id="foco" class="scrollmenu" style="-webkit-transform: translateZ(0); ">
         <div class="col colJuntitasMenus menus">
           <button v-for="(item, index) of listaMenus"
           :key="index" style="width: 200px"
@@ -482,9 +482,11 @@ export default {
         } else {
           console.log('Error en clickTeclaArticulo');
         }
+        document.activeElement.blur();
       }).catch((err) => {
         console.log(err);
         toast.error('Error. Comprobar consola');
+        document.activeElement.blur();
       });
     }
 

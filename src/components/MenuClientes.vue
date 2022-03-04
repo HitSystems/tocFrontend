@@ -7,13 +7,13 @@
                <button type="button" class="btn btn-warning btn-lg mr-0" @click="selectGlovo()">
                    Glovo
                 </button>
-               <button type="button" class="btn btn-success btn-lg mr-0" @click="selectUber()">
+               <button type="button" class="btn btn-info btn-lg mr-0" @click="selectUber()">
                    Uber
                 </button>
-               <button type="button" class="btn btn-info btn-lg mr-0" @click="selectDeliveroo()">
+               <!-- <button type="button" class="btn btn-info btn-lg mr-0" @click="selectDeliveroo()">
                    Deliveroo
-                </button>
-               <button type="button" class="btn btn-success btn-lg mr-0" @click="nuevoCliente()">
+                </button> -->
+               <button type="button" class="btn btn-success btn-lg mr-0"  data-bs-toggle="modal" data-bs-target="#modalNuevoCliente">
                    NUEVO
                 </button>
                <button type="button" class="btn btn-danger btn-lg mr-0" @click="reset()">
@@ -56,6 +56,29 @@
          </div>
       </div>
    </div>
+
+
+   <div class="modal" id="modalNuevoCliente" tabindex="-1" role="dialog"
+   data-keyboard="false" data-backdrop="static">
+      <div class="modal-dialog" role="document" style="max-width: 800px">
+         <div class="modal-content">
+            <div class="modal-header">
+               <h4>Crear nuevo cliente</h4>
+            </div>
+            <div class="modal-body">
+               <div class="row mx-auto">
+                  <label for="exampleInputEmail1" class="form-label">Nombre Cliente</label>
+                  <input v-model="nombreClienteNuevo" style="width: 659px; height: 50px; font-size: 20px" type="text" class="form-control">
+                  <label for="exampleInputEmail1" class="form-label mt-4">Nº Tarjeta</label>
+                  <input v-model="nTarjetaNueva" style="width: 659px; height: 50px; font-size: 20px" type="number" class="form-control">
+               </div>
+            </div>
+            <div class='modal-footer'>
+               <button type='submit' class='btn btn-success mx-auto' @click='nuevoCliente()' data-bs-dismiss="modal">Crear cliente</button>
+            </div>
+         </div>
+      </div>
+   </div>
 </template>
 <script>
 import { computed, ref, onMounted } from 'vue';
@@ -75,6 +98,8 @@ export default {
     const UBER = store.getters['Clientes/getUber'];
     const nombre = 'Santy';
     const inputBusqueda = ref('');
+    const nombreClienteNuevo = ref('');
+    const nTarjetaNueva = ref('');
     const clienteActivo = computed(() => store.state.Clientes.clienteActivo);
     const arrayClientes = ref([]);
     let modalClientes = null;
@@ -120,7 +145,29 @@ export default {
     }
 
    function nuevoCliente() {
-      toast.info('Deshabilitado temporalmente');
+      axios.post('clientes/crearNuevoCliente', { idTarjetaCliente: nTarjetaNueva.value, nombreCliente: nombreClienteNuevo.value}).then((res) => {
+         if(!res.data.error) {
+            toast.success('Cliente creado con éxito.');
+            axios.post('clientes/descargarClientesFinales').then((res) => {
+                  
+                if (res.data.error == false) {
+                   nombreClienteNuevo.value = '';
+                   nTarjetaNueva.value = '';
+                    toast.success('Clientes descargados OK');
+                } else {
+                    toast.error(res.data.mensaje);
+                }
+            }).catch((err) => {
+                console.log(err);
+                toast.error('Error descargarClientesFinales CATCH');
+            });
+         } else {
+            toast.error(res.data.mensaje);
+         }       
+      }).catch((err) => {
+         toast.error('Error en nuevoCliente() - MenuCliente.vue');
+      })
+
    }
 
    function reset() {
@@ -201,6 +248,8 @@ export default {
       selectUber,
       selectCliente,
       clienteActivo,
+      nombreClienteNuevo,
+      nTarjetaNueva,
     };
   },
    watch: {

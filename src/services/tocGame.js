@@ -1,6 +1,8 @@
 import axios from "axios";
 import store from '../store/index';
 import router from '../router/index';
+import { useToast } from "vue-toastification";
+const toast = useToast();
 
 const baseURL = 'http://localhost:3000/';
 
@@ -27,6 +29,7 @@ class tocGameV3 {
                 if (res.data.res.length > 0) {
                     return true;
                 }
+                toast.info("No hay nadie fichado");
                 return false;
             } else {
                 alert('Error en tocGame.js - AXIOS trabajadores/getTrabajadoresFichados');

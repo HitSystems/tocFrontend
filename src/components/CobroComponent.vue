@@ -103,7 +103,7 @@
             <div v-if="esVIP === false && esDevolucion === false
             && esConsumoPersonal === false
             && botonesCobroActivo && tkrs === false" class="row">
-                <div class="col-md-4 text-center">
+                <div class="col-md-6 text-center">
                     <img v-if="metodoPagoActivo == 'EFECTIVO'"
                     @click="setMetodoPago('EFECTIVO')"
                     src="../assets/imagenes/img-efectivo.png"
@@ -112,22 +112,13 @@
                     src="../assets/imagenes/img-efectivo-disabled.png"
                     alt="Cobrar con efectivo" width="185">
                 </div>
-                <div class="col-md-4 text-center">
+                <div class="col-md-6 text-center">
                     <img v-if="metodoPagoActivo == 'TARJETA'"
                     @click="setMetodoPago('TARJETA')"
                     src="../assets/imagenes/img-tarjetas.png"
                     alt="Cobrar con tarjeta" width="185">
                     <img v-else @click="setMetodoPago('TARJETA')"
                     src="../assets/imagenes/img-tarjetas-disabled.png"
-                    alt="Cobrar con tarjeta" width="185">
-                </div>
-                <div class="col-md-4 text-center">
-                    <img v-if="metodoPagoActivo == 'TARJETA 3G'"
-                    @click="setMetodoPago('TARJETA 3G')"
-                    src="../assets/imagenes/img-3g.png"
-                    alt="Cobrar con tarjeta" width="185">
-                    <img v-else @click="setMetodoPago('TARJETA 3G')"
-                    src="../assets/imagenes/img-3g-disabled.png"
                     alt="Cobrar con tarjeta" width="185">
                 </div>
             </div>
@@ -449,6 +440,7 @@ export default {
     }
 
     function reset() {
+      store.dispatch('CestasActivas/deleteCestaActivaAction', cestaID.value);
       store.dispatch('Cesta/setIdAction', -1);
       store.dispatch('setModoActual', 'NORMAL');
       store.dispatch('Clientes/resetClienteActivo');

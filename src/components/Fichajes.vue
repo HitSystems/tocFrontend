@@ -70,7 +70,7 @@
     </div> -->
 
     <!-- Modal -->
-    <div class="modal fade" id="modalFichajes" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal fade" id="modalFichajes" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
         <div class="modal-dialog" style="max-width: 700px">
             <div class="modal-content">
             <div class="modal-header">
@@ -110,7 +110,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-danger btn-lg" data-bs-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-danger btn-lg" data-bs-dismiss="modal" @click="goTo('/')">Confirmar</button>
             </div>
             </div>
         </div>
@@ -226,7 +226,6 @@ export default {
                     arrayTrabajadores.value[index].fichado = true;
                     actualizarTurnos();
                     idPlanificacion.value = 'SIN_TURNO';
-                    cerrarModal();
                 } else {
                     console.log(res.data.mensaje);
                     arrayTrabajadores.value[index].fichado = false;
@@ -275,6 +274,10 @@ export default {
             router.push('/');
         }
 
+        function goTo(x) {
+            router.push(x);
+        }
+
         onMounted(() => {
             modalFichajes = new Modal(document.getElementById('modalFichajes'), {
                 keyboard: false,
@@ -295,6 +298,7 @@ export default {
         });
 
         return {
+            goTo,
             goToMenuResponsable,
             abrirModalPassword,
             password,
