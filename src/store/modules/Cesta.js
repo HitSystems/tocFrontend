@@ -16,7 +16,7 @@ export default {
     },
     setIdMutation(state, payload) {
       state.cesta._id = payload;
-    }
+    },
   },
   getters: {
     // eslint-disable-next-line no-underscore-dangle

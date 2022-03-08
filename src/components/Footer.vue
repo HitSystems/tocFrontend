@@ -517,6 +517,7 @@ export default {
       }
 
       /* INICIALIZACIÓN DE CESTA */
+      console.log(store.getters['Cesta/getCestaId'])
       axios.post('/cestas/getCestaByID', { idCesta: store.getters['Cesta/getCestaId'] }).then((res) => {
         if (res.data.error == false) {
           console.log(res.data.info)
@@ -526,6 +527,7 @@ export default {
         }
       });
       axios.post('/trabajadores/getCurrentTrabajador').then((res) => {
+        console.log(res.data)
         nombreTrabajador.value = res.data.trabajador.nombre;
 
         store.dispatch('Trabajadores/setTrabajadorActivo', res.data.trabajador.idTrabajador);

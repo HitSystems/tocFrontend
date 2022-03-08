@@ -150,23 +150,24 @@ export default {
 
     function imprimirEntregas() {
       // const licencia = this.getNumeroTresDigitos(this.getParametros().licencia);
-      const licencia = params.codigoTienda;
-      console.log(`http://dsv.hiterp.com/TpvInforma.asp?Llic=00${licencia}&Versio=6001010&Tipus=EntregasPendientes`)
-      axios.get(`http://dsv.hiterp.com/TpvInforma.asp?Llic=00${licencia}&Versio=6001010&Tipus=EntregasPendientes`).then((response) => {
-        const { data } = response;
-        let imprimir = '';
-        let valid = false;
-        // eslint-disable-next-line no-plusplus
-        for (let i = 0; i < data.length; i++) {
-          if (valid || (data[i - 1] === ']' && data[i - 2] === 'a')) {
-            valid = true;
-            if (data[i] === ']') break;
-            imprimir += data[i];
-          }
-        }
-        // Mandar al backend para imprimir
-        console.log(imprimir);
-      });
+      // const licencia = params.codigoTienda;
+      // console.log(`http://dsv.hiterp.com/TpvInforma.asp?Llic=00${licencia}&Versio=6001010&Tipus=EntregasPendientes`)
+      // axios.get(`http://dsv.hiterp.com/TpvInforma.asp?Llic=00${licencia}&Versio=6001010&Tipus=EntregasPendientes`).then((response) => {
+      //   const { data } = response;
+      //   let imprimir = '';
+      //   let valid = false;
+      //   // eslint-disable-next-line no-plusplus
+      //   for (let i = 0; i < data.length; i++) {
+      //     if (valid || (data[i - 1] === ']' && data[i - 2] === 'a')) {
+      //       valid = true;
+      //       if (data[i] === ']') break;
+      //       imprimir += data[i];
+      //     }
+      //   }
+      //   // Mandar al backend para imprimir
+      //   console.log(imprimir);
+      // });
+      axios.post('impresora/imprimirEntregas');
       hideMenu();
       quitarActivoTicket();
     }
