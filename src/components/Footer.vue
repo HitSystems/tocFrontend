@@ -517,7 +517,7 @@ export default {
       }
 
       /* INICIALIZACIÓN DE CESTA */
-      console.log(store.getters['Cesta/getCestaId'])
+      console.log("SOY CESTA ID: ", store.getters['Cesta/getCestaId']);
       axios.post('/cestas/getCestaByID', { idCesta: store.getters['Cesta/getCestaId'] }).then((res) => {
         if (res.data.error == false) {
           console.log(res.data.info)

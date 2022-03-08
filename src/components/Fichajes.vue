@@ -223,7 +223,7 @@ export default {
         function ficharReal(trabajador, index) {
             axios.post('trabajadores/fichar', { idTrabajador: trabajador.idTrabajador, idPlan: idPlanificacion.value }).then((res) => {
                 if (!res.data.error) {
-                    store.dispatch('Cesta/setIdAction', trabajador._idTrabajador);
+                    store.dispatch('Cesta/setIdAction', trabajador.idTrabajador);
                     arrayTrabajadores.value[index].fichado = true;
                     actualizarTurnos();
                     idPlanificacion.value = 'SIN_TURNO';
@@ -259,15 +259,15 @@ export default {
         function desfichar(trabajador, index) {
             axios.post('trabajadores/desfichar', { idTrabajador: trabajador.idTrabajador }).then((res) => {
                 if (!res.data.error) {
-                    console.log('Trabajador desfichado');
                     arrayTrabajadores.value[index].fichado = false;
                     store.dispatch('CestasActivas/deleteCestaActivaAction', trabajador.idTrabajador);
                     axios.post('cestas/getCestaDiferente', { id_cesta: trabajador.idTrabajador }).then((data) => {
                         store.dispatch('Cesta/setIdAction', data.data._id);
-                        store.dispatch('Trabajadores/setTrabajadorActivo', parseInt(data.data._id));
-                        console.log('dfds,',data.data._id)
+                        // store.dispatch('Trabajadores/setTrabajadorActivo', parseInt(data.data._id));
                         axios.post('trabajadores/setActivo', { id: data.data._id }).then((data2) =>{
-                            console.log(data2)
+                            if (data2.data.error) {
+                                toast.error(data2.data.mensaje);
+                            } 
                         });
                     })
                 } else {

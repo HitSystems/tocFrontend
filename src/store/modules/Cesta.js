@@ -32,6 +32,6 @@ export default {
     },
     setIdAction({ commit }, idCesta) {
       commit('setIdMutation', idCesta);
-    }
+    },
   },
 };

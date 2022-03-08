@@ -12,7 +12,7 @@ export default {
         if(state.cestas[index] !== undefined && state.cestas[index].nombre.split(' ')[0] === 'Taula') {
           state.cestas.splice(index, 1);
         }
-        console.log(state.cestas)
+    
       },
     },
     getters: {
