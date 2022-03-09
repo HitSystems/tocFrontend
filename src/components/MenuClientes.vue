@@ -180,6 +180,9 @@ export default {
       }).catch((err) => {
          console.log(err);
       });
+      axios.post('promociones/setEstadoPromociones', {
+         estadoPromociones: true
+      });
    }
 
     function selectCliente(cliente) {
