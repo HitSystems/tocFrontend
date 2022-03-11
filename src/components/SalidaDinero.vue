@@ -53,20 +53,24 @@ export default {
         }
 
         function confirmarSalida() {
-            axios.post('movimientos/nuevaSalida', {
-                cantidad: Number(cantidad.value),
-                concepto: concepto.value
-            }).then((res) => {
-                if (!res.data.error) {
-                    toast.success('Salida OK');
-                    cerrarModal();
-                } else {
-                    toast.error(res.data.mensaje);
-                }
-            }).catch((err) => {
-                console.log(err);
-                toast.error('Error movimientos/nuevaSalida');
-            });
+            if (cantidad.value <= 500 && cantidad.value > 0 ) {
+                axios.post('movimientos/nuevaSalida', {
+                    cantidad: Number(cantidad.value),
+                    concepto: concepto.value
+                }).then((res) => {
+                    if (!res.data.error) {
+                        toast.success('Salida OK');
+                        cerrarModal();
+                    } else {
+                        toast.error(res.data.mensaje);
+                    }
+                }).catch((err) => {
+                    console.log(err);
+                    toast.error('Error movimientos/nuevaSalida');
+                });
+            } else {
+                toast.error('La cantidad debe ser un número entre 0 y 500');
+            }
         }
 
         onMounted(() => {
