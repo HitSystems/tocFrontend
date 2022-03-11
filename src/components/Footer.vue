@@ -517,17 +517,14 @@ export default {
       }
 
       /* INICIALIZACIÓN DE CESTA */
-      console.log("SOY CESTA ID: ", store.getters['Cesta/getCestaId']);
       axios.post('/cestas/getCestaByID', { idCesta: store.getters['Cesta/getCestaId'] }).then((res) => {
         if (res.data.error == false) {
-          console.log(res.data.info)
           store.dispatch('Cesta/setCestaAction', res.data.info);
         } else {
             toast.error(res.data.mensaje);
         }
       });
       axios.post('/trabajadores/getCurrentTrabajador').then((res) => {
-        console.log(res.data)
         nombreTrabajador.value = res.data.trabajador.nombre;
 
         store.dispatch('Trabajadores/setTrabajadorActivo', res.data.trabajador.idTrabajador);
