@@ -71,7 +71,35 @@ class tocGameV3 {
               tocGame.hayFichados().then((res) => {
                 if (res) { // Fichaje mínimo OK
                   tocGame.cajaAbierta().then((res2) => {
-                    if (res2 == false) router.push('/abrirCaja');
+                    if (res2 == false) { 
+                        router.push('/abrirCaja');
+                    } else {
+                        /* Cargar cesta y trabajador activo en el store */
+                        axios.get('trabajadores/getCurrentTrabajadorNueva').then((infoTrabajador) => {
+                            if (infoTrabajador.data.error == false) {
+                                store.dispatch('Trabajadores/setTrabajadorActivo', infoTrabajador.data.trabajador.idTrabajador);
+                                store.dispatch('Trabajadores/setNombreTrabajadorActivo', infoTrabajador.data.trabajador.nombre);
+                                axios.post('cestas/getCestaByTrabajadorId', { idTrabajador: infoTrabajador.data.trabajador.idTrabajador }).then((resCesta) => {
+                                    console.log("CESTA BUENA: ", resCesta.info);
+                                    if (resCesta.data.error === false && resCesta.data.info != null) {
+                                        store.dispatch('Cesta/setCestaAction', resCesta.data.info);
+                                    } else {                                        
+                                        console.log(resCesta.data.mensaje);
+                                    }
+                                }).catch((err) => {
+                                    console.log(err);
+                                    console.log('Error catch cestas/getCestasByTrabajadorId');
+                                })
+                            } else {
+                                console.log(infoTrabajador.data.mensaje);
+                                // toast.error(infoTrabajador.data.mensaje);
+                            }
+                        }).catch((err) => {
+                            console.log(err);
+                            console.log('Error catch trabajador/getCurrentTrabajador');
+                            // toast.error('Error catch trabajador/getCurrentTrabajador');
+                        });
+                    }
                   }).catch((err) => {
                     console.log(err);
                   });

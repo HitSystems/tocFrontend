@@ -138,7 +138,7 @@
         <button
           class="btn btn-secondary w-100 botonesPrincipales menusColorIvan mb-1">
           <span style="font-size: 14px;">
-          {{ cesta.nombreCesta && cesta.nombreCesta.split(' ')[0] === 'Trabajador' ? nombreTrabajador : cesta.nombreCesta }}
+          {{ nombreTrabajador }}
           </span>
         </button>
         <button
@@ -273,7 +273,7 @@ export default {
     const conCliente = null;
     const unidades = computed(() => store.state.unidades);
     const trabajadorActivo = computed(() => store.state.Trabajadores.trabajadorActivo);
-    const nombreTrabajador = ref('');
+    const nombreTrabajador = computed(() => store.state.Trabajadores.nombreTrabajadorActivo);
     const arrayTrabajadores = ref([]);
     const menuActivo = computed(() => store.state.Footer.menuActivo);
     const modoActual = computed(() => store.state.modoActual);
@@ -281,10 +281,10 @@ export default {
     const GLOVO = store.getters['Clientes/getGlovo'];
     const DELIVEROO = store.getters['Clientes/getDeliveroo'];
     const UBER = store.getters['Clientes/getUber'];
-
+  
     let inicioMagic = null;
     let finalMagic = null;
-
+  
     let modalSuplementos = null;
     let suplementos = ref([]);
     let suplementosSeleccionados = ref([]);
@@ -369,7 +369,7 @@ export default {
     //     store.dispatch('Cesta/setCestaAction', res);
     //   });
     // });
-    function cambioActivo() {
+    function cambioActivo() { // VIEJO
       axios.post('trabajadores/setActivo', { nombre: trabajadorActivo.value }).then((res) => {
         if (!res.data.error) {
           store.dispatch('Trabajadores/setTrabajadorActivo', trabajadorActivo.value);
@@ -517,18 +517,18 @@ export default {
       }
 
       /* INICIALIZACIÓN DE CESTA */
-      axios.post('/cestas/getCestaByID', { idCesta: store.getters['Cesta/getCestaId'] }).then((res) => {
-        if (res.data.error == false) {
-          store.dispatch('Cesta/setCestaAction', res.data.info);
-        } else {
-            toast.error(res.data.mensaje);
-        }
-      });
-      axios.post('/trabajadores/getCurrentTrabajador').then((res) => {
-        nombreTrabajador.value = res.data.trabajador.nombre;
+      // axios.post('/cestas/getCestaByID', { idCesta: store.getters['Cesta/getCestaId'] }).then((res) => {
+      //   if (res.data.error == false) {
+      //     store.dispatch('Cesta/setCestaAction', res.data.info);
+      //   } else {
+      //       toast.error(res.data.mensaje);
+      //   }
+      // });
+      // axios.post('/trabajadores/getCurrentTrabajador').then((res) => {
+      //   nombreTrabajador.value = res.data.trabajador.nombre;
 
-        store.dispatch('Trabajadores/setTrabajadorActivo', res.data.trabajador.idTrabajador);
-      });
+      //   store.dispatch('Trabajadores/setTrabajadorActivo', res.data.trabajador.idTrabajador);
+      // });
 
       
     });

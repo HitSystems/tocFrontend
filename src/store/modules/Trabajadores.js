@@ -3,6 +3,7 @@ export default {
     state: {
         arrayTrabajadores: [],
         trabajadorActivo: '',
+        nombreTrabajadorActivo: ''
     },
     mutations: {
       setArrayTrabajadoresMutation(state, payload) {
@@ -11,11 +12,15 @@ export default {
       setTrabajadorActivoMutation(state, payload) {
         state.trabajadorActivo = payload;
       },
+      setNombreTrabajadorActivoMutation(state, payload) {
+        state.nombreTrabajadorActivo = payload;
+      }
     },
     getters: {
       // eslint-disable-next-line no-underscore-dangle
       getArrayTrabajadores: (state) => state.arrayTrabajadores,
       getTrabajadorActivo: (state) => state.trabajadorActivo,
+      getNombreTrabajadorActivo: (state) => state.nombreTrabajadorActivo,
     },
     actions: {
       setArrayTrabajadores({ commit }, data) {
@@ -24,5 +29,9 @@ export default {
       setTrabajadorActivo({ commit }, data) {
         commit('setTrabajadorActivoMutation', data);
       },
+      setNombreTrabajadorActivo({ commit }, data) {
+        console.log("Estoy entrando y es:", data);
+        commit('setNombreTrabajadorActivoMutation', data)
+      }
     },
   };
