@@ -244,7 +244,7 @@
     </div>
   </div>
   <div style="position:fixed; bottom: 2px; left: 2px;">
-    <span style="font-weight: bold">(v{{tocVersion}})  ({{nombreTienda}})</span>
+    <span style="font-weight: bold">(v{{tocVersion}})  ({{nombreTienda}})  {{getClock}}</span>
   </div>
 </template>
 
@@ -281,7 +281,18 @@ export default {
     const GLOVO = store.getters['Clientes/getGlovo'];
     const DELIVEROO = store.getters['Clientes/getDeliveroo'];
     const UBER = store.getters['Clientes/getUber'];
-  
+    const getClock = ref('');
+
+  function actualizarHora() {
+    const d = new Date();
+    const s = d.getSeconds();
+    const m = d.getMinutes();
+    const h = d.getHours();
+    getClock.value = ("0" + h).substr(-2) + ":" + ("0" + m).substr(-2) + ":" + ("0" + s).substr(-2);
+  }
+
+  setInterval(actualizarHora, 1000);
+
     let inicioMagic = null;
     let finalMagic = null;
   
@@ -652,6 +663,7 @@ export default {
       checkSuplementoActivo,
       addSuplemento,
       nombreTrabajador,
+      getClock
     };
   },
   components: {
