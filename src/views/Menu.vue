@@ -10,7 +10,7 @@
             <i class="bi bi-cash iconosBootstrap me-3"></i>
           </div>
         </router-link>
-        <router-link to="/menu/caja/"
+        <router-link to="/menu/caja/tickets"
         class="list-group-item list-group-item-action py-3 lh-tight">
           <div class="d-flex w-100 align-items-center justify-content-center">
             <!-- <img src='../assets/caja_fuerte.png' class='img_size' /> -->
