@@ -232,7 +232,7 @@
                   <button class='btn w-100 h-100 colorIvan1 btnSuplemento' @click="selectSuplemento(item._id)" v-bind:class="[{'suplementoActivo': checkSuplementoActivo(item._id)}]">
                     {{item.nombre}}
                     <br />
-                    {{item.precioBase}} €
+                    {{item.precioConIva}} €
                   </button>
                 </div>
             </div>

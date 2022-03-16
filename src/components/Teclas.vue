@@ -111,6 +111,7 @@
 </template>
 <script>
 /* eslint-disable */
+import { Modal } from 'bootstrap';
 import { computed, onMounted, ref } from 'vue';
 import { useStore } from 'vuex';
 // import { Modal } from 'bootstrap';
@@ -685,7 +686,6 @@ export default {
     });
 
     return {
-      test,
       edadState,
       listaMenus,
       menuActivo,
