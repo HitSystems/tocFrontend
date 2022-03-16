@@ -21,6 +21,14 @@ class tocGameV3 {
         });
     }
 
+
+    // document.addEventListener("keypress", function(e){
+    //     if(e.keyCode != 13) {
+    //         barcode.value += e.key;
+    //     }
+    //     e.preventDefault();
+    // });
+
     getParametros() { return this.parametros };
 
     hayFichados() {
