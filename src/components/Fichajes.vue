@@ -184,12 +184,13 @@ export default {
         }
 
         function abrirModal() {
-            actualizarTurnos().then(() => {
-                modalFichajes.show();
-            }).catch((err) => {
-                console.log(err);
-                modalFichajes.show();
-            });            
+            modalFichajes.show();
+            // actualizarTurnos().then(() => {
+            //     modalFichajes.show();
+            // }).catch((err) => {
+            //     console.log(err);
+            //     modalFichajes.show();
+            // });            
         }
         function abrirModalPassword() {
             modalPassword.show();

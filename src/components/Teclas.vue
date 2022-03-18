@@ -184,10 +184,7 @@ export default {
     //   console.log(socket.sendBuffer);
     // }
     function esActivo(x) {
-      if (x === menuActivo) {
-        return true;
-      }
-      return false;
+      return x === menuActivo;
     }
     function submenuEsActivo(x) {
       return x === subMenuActivo;
@@ -197,7 +194,7 @@ export default {
         if (res.data.error == false) {
           store.dispatch('ModalPeso/abrirModal', { idArticulo: articuloAPeso.idArticle, idBoton, precioConIva: res.data.info.precioConIva });
         } else {
-          toast.error(res.data.mensaje);     
+          toast.error(res.data.mensaje); 
         }
       });
     }
@@ -657,7 +654,7 @@ export default {
         }
       })
     }
-    // getSubmenus();
+    getSubmenus();
     function isEditarArticulos(index) {
       return modoActual.value === 'MODIFICAR_ARTICULO' && index === -1 ? true : false;
     }
