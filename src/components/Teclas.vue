@@ -1,23 +1,39 @@
 <template>
-  <div class="row p-2" id="menusColores">
-    <template v-if="listaMenus.length <= 11">
-      <div v-for="(item, index) of listaMenus" :key="item.nomMenu" @click="clickMenu(index)" class="col colJuntitasMenus menus" style="padding-left: 4px;">
-        <button class="btn btn-secondary w-100 menus menusColorIvan colorMenus" v-bind:class="[{'activo' : esActivo(index)}]">
-          {{item.nomMenu}}
+  <div class="row pb-1" id="menusColores" v-if='showBackButton'>
+      <div v-for='(item, index) of listaSubmenus' :key='index' @click='clickSubmenu(item.tag)' class='col colJuntitas menus' styled='padding-left: 4px;'>
+        <button class='btn btn-secondary w-100 menus menusColorIvan colorMenus' v-bind:class="[{'activo': submenuEsActivo(item.tag)}]">
+          {{item.nombre}}
         </button>
       </div>
-    </template>
-    <template v-else class="scrollmenu">
-      <div id="foco" class="scrollmenu" style="-webkit-transform: translateZ(0); ">
-        <div class="col colJuntitasMenus menus">
-          <button v-for="(item, index) of listaMenus"
-          :key="index" style="width: 200px"
-          class="btn btn-secondary menus menusColorIvan ms-2"
-          v-bind:class="[{'activo' : esActivo(index)}, 'colorMenus']"
-          @click="clickMenu(index)">{{item.nomMenu}}</button>
+  </div>
+  <div class="row" id="menusColores" v-bind:class="[{'mb-3': showBackButton === true, 'p-2': showBackButton === false}]">
+      <template v-if="listaMenus.length <= 11">
+        <template v-if='showBackButton'>
+          <div v-for="(item, index) of listaMenus" :key="item.nomMenu" @click="clickMenu(index)" class="col colJuntitasMenus subMenus" style="padding-left: 4px;">
+            <button class="btn btn-secondary w-100 subMenus menusColorIvan colorMenus" v-bind:class="[{'activo': esActivo(index)}]">
+              {{item.nomMenu}}
+            </button>
+          </div>
+        </template>
+        <template v-else>
+          <div v-for="(item, index) of listaMenus" :key="item.nomMenu" @click="clickMenu(index)" class="col colJuntitasMenus menusSimples" style="padding-left: 4px;">
+            <button class="btn btn-secondary w-100 menusSimples menusColorIvan colorMenus" v-bind:class="[{'activo' : esActivo(index)}]">
+              {{item.nomMenu}}
+            </button>
+          </div>
+        </template>
+      </template>
+      <template v-else class="scrollmenu">
+        <div class="scrollmenu" style="-webkit-transform: translateZ(0); ">
+          <div class="col colJuntitasMenus menus">
+            <button v-for="(item, index) of listaMenus"
+            :key="index" style="width: 200px"
+            class="btn btn-secondary menus menusColorIvan ms-2"
+            v-bind:class="[{'activo' : esActivo(index)}, 'colorMenus']"
+            @click="clickMenu(index)">{{item.nomMenu}}</button>
+          </div>
         </div>
-      </div>
-    </template>
+      </template>
   </div>
   <div>
     <div class="row" v-for="index in 6" :key="index">
@@ -27,7 +43,8 @@
               <button v-bind:id="listadoTeclas[(index-1)*6+(index2-1)].idBoton"
               class="btn btn-primary rounded-0 w-100 teclas"
               v-bind:class="[listadoTeclas[(index-1)*6+(index2-1)].color,
-              {'invisible': listadoTeclas[(index-1)*6+(index2-1)].idArticle == -1}]"
+              {'invisible': listadoTeclas[(index-1)*6+(index2-1)].idArticle == -1 && !isEditarArticulos(listadoTeclas[(index-1)*6+(index2-1)].idArticle)},
+              {'editarArticulos': isEditarArticulos(listadoTeclas[(index-1)*6+(index2-1)].idArticle)}]"
               @click="clickTecla(listadoTeclas[(index-1)*6+(index2-1)]);
                mostrarInfoVisor(listadoTeclas[(index-1)*6+(index2-1)]);"
               v-on:contextmenu="abrirFicha(listadoTeclas[(index-1)*6+(index2-1)].idArticle)"
@@ -40,7 +57,8 @@
               <button v-bind:id="listadoTeclas[(index-1)*6+(index2-1)].idBoton"
               class="btn btn-primary rounded-0 w-100 teclas"
               v-bind:class="[listadoTeclas[(index-1)*6+(index2-1)].color,
-              {'invisible': listadoTeclas[(index-1)*6+(index2-1)].idArticle == -1}]"
+              {'invisible': listadoTeclas[(index-1)*6+(index2-1)].idArticle == -1 && !isEditarArticulos(listadoTeclas[(index-1)*6+(index2-1)].idArticle)},
+              {'editarArticulos': isEditarArticulos(listadoTeclas[(index-1)*6+(index2-1)].idArticle)}]"
               @click="clickTecla(listadoTeclas[(index-1)*6+(index2-1)]);
               mostrarInfoVisor(listadoTeclas[(index-1)*6+(index2-1)]);"
               v-on:contextmenu="abrirFicha(listadoTeclas[(index-1)*6+(index2-1)].idArticle)"
@@ -53,7 +71,8 @@
             <button v-bind:id="listadoTeclas[(index-1)*6+(index2-1)].idBoton"
             class="btn btn-primary rounded-0 w-100 teclas"
             v-bind:class="[listadoTeclas[(index-1)*6+(index2-1)].color,
-            {'invisible': listadoTeclas[(index-1)*6+(index2-1)].idArticle == -1}]"
+            {'invisible': listadoTeclas[(index-1)*6+(index2-1)].idArticle == -1 && !isEditarArticulos(listadoTeclas[(index-1)*6+(index2-1)].idArticle)},
+            {'editarArticulos': isEditarArticulos(listadoTeclas[(index-1)*6+(index2-1)].idArticle)}]"
             @click="modalesSumable(listadoTeclas[(index-1)*6+(index2-1)],
             listadoTeclas[(index-1)*6+(index2-1)].idBoton);
             mostrarInfoVisor(listadoTeclas[(index-1)*6+(index2-1)])"
@@ -64,10 +83,35 @@
         </div>
     </div>
   </div>
+  <!-- MODAL SUPLEMENTOS -->
+  <div class="modal fade" id="modalSuplementos" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Suplementos</h5>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                <div v-for='(item, index) of suplementos' :key='index' class='col mb-3'>
+                  <button class='btn w-100 h-100 colorIvan1 btnSuplemento' @click="selectSuplemento(item._id)" v-bind:class="[{'suplementoActivo': checkSuplementoActivo(item._id)}]">
+                    {{item.nombre}}
+                    <br />
+                    {{item.precioConIva}} €
+                  </button>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary btn-lg colorIvan3" @click="cerrarModal(true)">Cancelar</button>
+            <button type="button" class="btn btn-secondary btn-lg colorIvan4" @click="addSuplemento()">Añadir</button>
+        </div>
+        </div>
+    </div>
+  </div>
 </template>
-
 <script>
 /* eslint-disable */
+import { Modal } from 'bootstrap';
 import { computed, onMounted, ref } from 'vue';
 import { useStore } from 'vuex';
 // import { Modal } from 'bootstrap';
@@ -85,6 +129,10 @@ export default {
     const cesta = computed(() => store.state.Cesta.cesta);
     const cajaAbierta = computed(() => store.state.Caja.cajaAbierta);
     const listaMenus = ref([{ nomMenu: '' }]);
+    const listaSubmenus = ref([{ nombre: '', tag: '' }]);
+    const dobleMenu = ref(false);
+    const showBackButton = ref(false);
+    let clickBack = false;
     let clickMenuBloqueado = false;
     const listaPrecios = ref([{
       _id: -1,
@@ -98,10 +146,28 @@ export default {
     ]);
     const listadoTeclas = ref([]);
     let menuActivo = 0;
+    let subMenuActivo = '01';
     const botonesPrecio = false;
     const unidadesAplicar = 1;
     const edadState = computed(() => store.state.modalPeso.edadState);
-
+    let idArticulo = null;
+    let modalSuplementos = null;
+    let suplementos = ref([]);
+    //let suplementosSeleccionados = computed(() => store.state.Suplementos.suplementosSeleccionados);
+    let suplementosSeleccionados = ref([]);
+    const modoActual = computed(() => store.state.modoActual);
+    function cerrarModal(borrarItem = false) {
+      if(borrarItem) {
+        axios.post('/cestas/borrarItemCesta', { _id: cesta.value._id, idArticulo, idArticulo }).then((res) => {
+          if (res.data.okey) {
+            store.dispatch('Cesta/setCestaAction', res.data.cestaNueva);
+          } else {
+            console.log(res.data.okey);
+          }
+        });
+      }
+      modalSuplementos.hide();
+    }
     // function test() {
     //   emitSocket('test', { destino: 'La concha de tu hermana' });
     //   // socket.emit('test', { destino: 'La concha de tu hermana' });
@@ -122,6 +188,9 @@ export default {
         return true;
       }
       return false;
+    }
+    function submenuEsActivo(x) {
+      return x === subMenuActivo;
     }
     function modalesSumable(articuloAPeso, idBoton) {
       axios.post('articulos/getArticulo', { idArticulo: articuloAPeso.idArticle }).then((res) => {
@@ -467,7 +536,37 @@ export default {
       }
     }
 
+    function clickSubmenu(tag) {
+      axios.post('/doble-menus/clickMenu', { tag }).then((res) => {
+        if(!res.data.bloqueado) {
+          console.log(res)
+          listaMenus.value = res.data.resultado;
+          subMenuActivo = tag;
+          clickMenuBloqueado = false;
+          clickMenu(0);
+          dobleMenu.value = false;
+        } else {
+          console.log('Kachau');
+        }
+      })
+    }
+
+    function goBackSubmenus() {
+      clickBack = true;
+      getSubmenus(true);
+    }
+
+
     function clickTecla(objListadoTeclas) {
+      idArticulo = objListadoTeclas.idArticle;
+      // Eze, no le hagas caso a esto, de momento no sirve
+      if(modoActual.value === 'MODIFICAR_ARTICULO') {
+        if(idArticulo === -1) {
+          
+        } else {
+        }
+        return;
+      }
       axios.post('cestas/clickTeclaArticulo', {
         idArticulo: objListadoTeclas.idArticle,
         idBoton: objListadoTeclas.idBoton,
@@ -477,8 +576,13 @@ export default {
         unidades: (store.getters['getUnidades'] == 0) ? (1):(store.getters['getUnidades'])
       }).then((res2) => {
         if (res2.data.error === false && res2.data.bloqueado === false) {
-          store.dispatch('resetUnidades');
-          store.dispatch('Cesta/setCestaAction', res2.data.cesta);
+          if(res2.data.cesta.suplementos) {
+            suplementos.value = res2.data.cesta.data;
+            modalSuplementos.show();
+          } else {
+            store.dispatch('resetUnidades');
+            store.dispatch('Cesta/setCestaAction', res2.data.cesta);
+          }
         } else {
           console.log('Error en clickTeclaArticulo');
         }
@@ -489,18 +593,79 @@ export default {
         document.activeElement.blur();
       });
     }
-
-    resetTeclado();
-    axios.post('/menus/getMenus').then((res) => {
-      if (!res.data.bloqueado) {
-        listaMenus.value = res.data.resultado;
-        clickMenu(0);
-      } else {
-        console.log('EN ESTE MOMENTO NO ES POSIBLE CARGAR EL TECLADO');
+    function selectSuplemento(idSuplemento) {
+      const supl = suplementosSeleccionados.value.findIndex(o => o.suplemento === idSuplemento);
+      if(supl !== -1) {
+        suplementosSeleccionados.value.splice(supl, 1);
+        return;
       }
-    });
-
+      suplementosSeleccionados.value.push({ suplemento: idSuplemento, activo: true });
+    }
+    function checkSuplementoActivo(idSuplemento) {
+      const s = suplementosSeleccionados.value.findIndex(o => o.suplemento === idSuplemento)
+      return s !== -1 ? true : false;
+    }
+    function addSuplemento() {
+      axios.post('cestas/addSuplemento', { idCesta: cesta.value._id, suplementos: suplementosSeleccionados.value, idArticulo, posArticulo: -100 }).then((res) => {
+        if(!res.data.error && !res.data.bloqueado) {
+          store.dispatch('resetUnidades');
+          store.dispatch('Cesta/setCestaAction', res.data.cesta);
+          suplementosSeleccionados.value = [];
+          idArticulo = null;
+          cerrarModal();
+        } else {
+          console.log('Error en clickSuplemento');
+        }
+      }).catch((err) => {
+        console.log(err);
+        toast.error('Error. Comprobar consola');
+      });
+    }
+    resetTeclado();
+    if(!showBackButton.value) {
+      axios.post('/menus/getMenus').then((res) => {
+        if (!res.data.bloqueado) {
+          listaMenus.value = res.data.resultado;
+          clickMenu(0);
+        } else {
+          console.log('EN ESTE MOMENTO NO ES POSIBLE CARGAR EL TECLADO');
+        }
+      });
+    }
+    function getSubmenus(backButton = false) {
+      axios.post('/doble-menus/getMenus').then((res) => {
+        if(!res.data.bloqueado) {
+          if(res.data.resultado.length > 0) {
+            listaSubmenus.value = res.data.resultado;
+            if(!backButton) clickSubmenu(res.data.resultado[0].tag);
+            else dobleMenu.value = true;
+            showBackButton.value = true;
+            if(!clickBack) {
+              axios.post('/menus/getSubmenus', { tag: res.data.resultado[0].tag }).then((res2) => {
+                if(!res2.data.bloqueado) {
+                  listaMenus.value = res2.data.resultado;
+                  clickMenuBloqueado = false;
+                  clickMenu(0);
+                } else {
+                  console.log('F TECLADO');
+                }
+              });
+            } 
+          } else {
+            dobleMenu.value = false;
+          }
+        }
+      })
+    }
+    // getSubmenus();
+    function isEditarArticulos(index) {
+      return modoActual.value === 'MODIFICAR_ARTICULO' && index === -1 ? true : false;
+    }
     onMounted(() => {
+      modalSuplementos = new Modal(document.getElementById('modalSuplementos'), {
+        keyboard: false,
+        backdrop: 'static',
+      });
       document.onselectstart = function(){ return false; }
       /* OBSERVAR SI LA CAJA ESTÁ ABIERTA */
       tocGame.iniciarToc();
@@ -531,6 +696,19 @@ export default {
       clickTecla,
       mostrarInfoVisor,
       modalesSumable,
+      dobleMenu,
+      listaSubmenus,
+      clickSubmenu,
+      submenuEsActivo,
+      showBackButton,
+      goBackSubmenus,
+      suplementos,
+      addSuplemento,
+      cerrarModal,
+      suplementosSeleccionados,
+      selectSuplemento,
+      checkSuplementoActivo,
+      isEditarArticulos,
     };
     /* FINAL SETUP */
   },
@@ -583,17 +761,24 @@ export default {
     font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
 }
 .menus {
-    height: 70px;
+    height: 35px;
+}
+.subMenus {
+  height: 50px;
+}
+.menusSimples {
+  height: 70px;
 }
 .colorMenus {
-    background-color: #d45600;
-    color: #fffaee;
-    border-color: #d45600;
+    background-color: #fff5e9 !important;
+    color: #c95907 !important;
+    border-color: #bf5c18 !important;
 }
 .activo {
-    background-color: #fff5e9;
-    color: #c95907;
-    border-color: #bf5c18;
+    
+    background-color: #d45600 !important;
+    color: #fffaee !important;
+    border-color: #d45600 !important;
 }
 .btn-secondary:hover {
     color: #c95907 !important;
@@ -601,9 +786,12 @@ export default {
     border-color: #bf5c18 !important;
   }
   .btn-secondary:focus, .btn-secondary.focus {
-    color: #c95907 !important;
+    /* color: #c95907 !important;
     background-color: #fff5e9 !important;
-    border-color: #bf5c18 !important;
+    border-color: #bf5c18 !important; */
+    background-color: #d45600 !important;
+    color: #fffaee !important;
+    border-color: #d45600 !important;
     box-shadow: none !important;
   }
   .btn-secondary.disabled, .btn-secondary:disabled {
@@ -614,9 +802,12 @@ export default {
   .btn-secondary:not(:disabled):not(.disabled):active,
   .btn-secondary:not(:disabled):not(.disabled).active,
   .show > .btn-secondary.dropdown-toggle {
-    color: #c95907 !important;
+    /* color: #c95907 !important;
     background-color: #fff5e9 !important;
-    border-color: #bf5c18 !important;
+    border-color: #bf5c18 !important; */
+    background-color: #d45600 !important;
+    color: #fffaee !important;
+    border-color: #d45600 !important;
   }
   .btn-secondary:not(:disabled):not(.disabled):active:focus,
   .btn-secondary:not(:disabled):not(.disabled).active:focus
@@ -630,5 +821,15 @@ export default {
     width: 100%;
     overflow-x: scroll;
     white-space: nowrap;
+  }
+  .suplementoActivo {
+    background-color: #FBB5B5 !important;
+  }
+  .btnSuplemento:focus, .btnSuplemento:active {
+    box-shadow: none !important;
+  }
+  .editarArticulos {
+    background-color: #c95807a4 !important;
+    border-color: transparent !important;
   }
 </style>
