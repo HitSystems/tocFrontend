@@ -229,7 +229,22 @@ export default {
     const arrayFichados = ref([]);
     const esperando = computed(() => store.state.esperandoDatafono); // ref(false);
     /* eslint no-underscore-dangle: ["error", { "allow": ["_id"] }] */
-    const cestaID = computed(() => store.state.Cesta.cesta._id);
+
+    function getCestaId() {
+      return axios.get('cestas/getCestaCurrentTrabajador').then((res) => {
+        if (!res.data.error) {
+          return res.data.info._id;
+        } else {
+          console.log(res.data.mensaje);
+          return -1;
+        }
+      }).catch((err) => {
+        console.log(err);
+        toast.error(err.message);
+        return -1;
+      });
+    }
+
     function reset() {
       cuentaAsistenteV.value = 0;
       cuentaAsistenteTecladoV.value = 0;
@@ -238,7 +253,6 @@ export default {
     }
 
     function agregarTecla(x) {
-      console.log(x);
       cuentaAsistenteTecladoV.value = String(Number(cuentaAsistenteTecladoV.value + x));
     }
 
@@ -362,15 +376,17 @@ export default {
       consultaFinalPaytef();
     }
 
-    function cobrar() {
+    async function cobrar() {
       if (!esperando.value) {
-        if (totalTkrs.value > 0) { /* Ticket restaurant activo */
+        let cestaId = await getCestaId();
+        if (totalTkrs.value > 0 && await cestaId != -1) { /* Ticket restaurant activo */
           const data = {
             total: Number(total),
             totalTkrs: totalTkrs.value,
-            idCesta: cestaID.value,
+            idCesta: cestaId,
             idCliente: infoCliente,
           }
+
           axios.post('tickets/crearTicketTKRS', data).then((res) => {
             if(!res.data.error) {
               reset();
@@ -392,10 +408,9 @@ export default {
           // {tkrs: true, totalTkrs: this.totalTkrs, tipoPago: this.metodoPagoActivo});
         } else { // Sin ticket restaurant (normal)
           if (metodoPagoActivo.value === 'EFECTIVO') {
-            console.log(cestaID.value);
             axios.post('tickets/crearTicketEfectivo', {
               total: Number(total),
-              idCesta: cestaID.value,
+              idCesta: cestaId,
               idCliente: infoCliente
             }).then((res) => {
               if (!res.data.error) {
@@ -417,10 +432,9 @@ export default {
           }
 
           if (metodoPagoActivo.value === 'TARJETA 3G') {
-            console.log(cestaID.value);
             axios.post('tickets/crearTicketDatafono3G', {
               total: Number(total),
-              idCesta: cestaID.value,
+              idCesta: cestaId,
               idCliente: infoCliente
             }).then((res) => {
               if (!res.data.error) {
@@ -439,15 +453,13 @@ export default {
             axios.post('parametros/getParametros').then((resParams) => {
               if (resParams.data.parametros != undefined || resParams.data.parametros != null) {
                 if (resParams.data.parametros.tipoDatafono == 'CLEARONE') {
-                  emitSocket('enviarAlDatafono', { total: Number(total), idCesta: cestaID.value, idClienteFinal: infoCliente });
-                  // socket.emit('enviarAlDatafono', { total: Number(total), idCesta: cestaID.value, idClienteFinal: infoCliente });
+                  emitSocket('enviarAlDatafono', { total: Number(total), idCesta: cestaId, idClienteFinal: infoCliente });
                   setEsperando(true);
                 } else if (resParams.data.parametros.tipoDatafono == 'PAYTEF') {
-                  axios.post('paytef/iniciarTransaccion', { cantidad: Number(total), idCesta: cestaID.value, idClienteFinal: infoCliente }).then((resPaytef) => {
+                  axios.post('paytef/iniciarTransaccion', { cantidad: Number(total), idCesta: cestaId, idClienteFinal: infoCliente }).then((resPaytef) => {
                     if (resPaytef.data.error == true) {
                       toast.error(resPaytef.data.mensaje);
                     } else {
-                      // emitSocket('polling', { cantidad: Number(total), idCesta: cestaID.value, idClienteFinal: infoCliente });
                       store.dispatch('setEsperandoDatafono', true);
                       consultarPaytef();
                     }
@@ -475,7 +487,7 @@ export default {
     }
 
     function reset() {
-      store.dispatch('CestasActivas/deleteCestaActivaAction', cestaID.value);
+      store.dispatch('CestasActivas/deleteCestaActivaAction', cestaId);
       store.dispatch('Cesta/setIdAction', -1);
       store.dispatch('setModoActual', 'NORMAL');
       store.dispatch('Clientes/resetClienteActivo');
