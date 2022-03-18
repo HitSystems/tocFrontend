@@ -327,6 +327,41 @@ export default {
       store.dispatch('setEsperandoDatafono', payload);
     }
 
+    function checkPaytefResponse(paytef) {
+      if (!paytef.data.error) {
+        return paytef.data.info;
+      } else {
+        return false;
+      }
+    }
+
+    function consultaFinalPaytef() {
+      axios.post('paytef/resultadoFinal', { idClienteFinal: infoCliente }).then((res) => {
+        store.dispatch('setEsperandoDatafono', false);
+
+        if (res.data.error == false) {
+          store.dispatch('Cesta/setIdAction', -1);
+          store.dispatch('setModoActual', 'NORMAL');
+          store.dispatch('Clientes/resetClienteActivo');
+          store.dispatch('Footer/resetMenuActivo');
+          router.push({ name: 'Home', params: { tipoToast: 'success', mensajeToast: 'Ticket creado' } });
+        } else {
+          toast.error(res.data.mensaje);
+        }
+      }).catch((err) => {
+        console.log(err);
+        toast.error(err.message);
+      });
+    }
+
+    async function consultarPaytef() {
+      setEsperando(true);
+      while(checkPaytefResponse(await axios.get('paytef/polling'))) {
+        123
+      }
+      consultaFinalPaytef();
+    }
+
     function cobrar() {
       if (!esperando.value) {
         if (totalTkrs.value > 0) { /* Ticket restaurant activo */
@@ -407,14 +442,14 @@ export default {
                   emitSocket('enviarAlDatafono', { total: Number(total), idCesta: cestaID.value, idClienteFinal: infoCliente });
                   // socket.emit('enviarAlDatafono', { total: Number(total), idCesta: cestaID.value, idClienteFinal: infoCliente });
                   setEsperando(true);
-                } else if (resParams.data.parametros.tipoDatafono == 'PAYTEF'){
-                  setEsperando(true);
+                } else if (resParams.data.parametros.tipoDatafono == 'PAYTEF') {
                   axios.post('paytef/iniciarTransaccion', { cantidad: Number(total), idCesta: cestaID.value, idClienteFinal: infoCliente }).then((resPaytef) => {
                     if (resPaytef.data.error == true) {
                       toast.error(resPaytef.data.mensaje);
                     } else {
-                      emitSocket('polling', { cantidad: Number(total), idCesta: cestaID.value, idClienteFinal: infoCliente });
-                      // socket.emit('polling', { cantidad: Number(total), idCesta: cestaID.value, idClienteFinal: infoCliente });
+                      // emitSocket('polling', { cantidad: Number(total), idCesta: cestaID.value, idClienteFinal: infoCliente });
+                      store.dispatch('setEsperandoDatafono', true);
+                      consultarPaytef();
                     }
                   }).catch((err) => {
                     console.log(err);

@@ -27,16 +27,16 @@ socket.on('resConsultaPuntos', (data) => {
 });
 
 socket.on('resPaytef', (data) => {
-  store.dispatch('setEsperandoDatafono', false);
-  if (data.error == false) {
-    store.dispatch('Cesta/setIdAction', -1);
-    store.dispatch('setModoActual', 'NORMAL');
-    store.dispatch('Clientes/resetClienteActivo');
-    store.dispatch('Footer/resetMenuActivo');
-    router.push({ name: 'Home', params: { tipoToast: 'success', mensajeToast: 'Ticket creado' } });
-  } else {
-    toast.error(data.mensaje);
-  }
+  // store.dispatch('setEsperandoDatafono', false);
+  // if (data.error == false) {
+  //   store.dispatch('Cesta/setIdAction', -1);
+  //   store.dispatch('setModoActual', 'NORMAL');
+  //   store.dispatch('Clientes/resetClienteActivo');
+  //   store.dispatch('Footer/resetMenuActivo');
+  //   router.push({ name: 'Home', params: { tipoToast: 'success', mensajeToast: 'Ticket creado' } });
+  // } else {
+  //   toast.error(data.mensaje);
+  // }
 });
 
 socket.on('resDatafono', (data) => {
