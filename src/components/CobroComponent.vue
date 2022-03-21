@@ -493,8 +493,14 @@ export default {
       }
     }
 
-    function reset() {
-      store.dispatch('CestasActivas/deleteCestaActivaAction', cestaId);
+    async function reset() {
+      const res = await axios.post('trabajadores/getCurrentTrabajador', {});
+      if (!res.data.error) {
+        store.dispatch('CestasActivas/deleteCestaActivaAction', res.data.trabajador.idTrabajador);
+      } else {
+        toast.error(res.data.mensaje);
+      }
+      
       store.dispatch('Cesta/setIdAction', -1);
       store.dispatch('setModoActual', 'NORMAL');
       store.dispatch('Clientes/resetClienteActivo');
