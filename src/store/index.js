@@ -20,9 +20,13 @@ import Clientes from './modules/Clientes';
 
 import Footer from './modules/Footer';
 
-import socket from '../sockets/socket';
 import CestasActivas from './modules/CestasActivas';
+
 import Caja from './modules/Caja';
+
+import ModalEditarProducto from './modules/ModalEditarProducto';
+
+import socket from '../sockets/socket';
 import axios from 'axios';
 
 let timeoutBorrar = null;
@@ -108,6 +112,7 @@ export default createStore({
     Clientes,
     Caja,
     Footer,
-    CestasActivas
+    CestasActivas,
+    ModalEditarProducto,
   },
 });
