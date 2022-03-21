@@ -558,10 +558,20 @@ export default {
       idArticulo = objListadoTeclas.idArticle;
       // Eze, no le hagas caso a esto, de momento no sirve
       if(modoActual.value === 'MODIFICAR_ARTICULO') {
-        if(idArticulo === -1) {
+        // if(idArticulo === -1) {
+        //   alert('Has tocado una tecla vacía.')
+        // } else {
           
-        } else {
-        }
+        //   axios.post('articulos/getArticulo', { idArticulo }).then(({ data }) => {
+        //     if(!data.error) {
+        //       store.dispatch('ModalEditarProducto/abrirModal', { idArticulo, precioBase: data.info.precioBase, nombre: data.info.nombre, tipoIva: data.info.tipoIva });
+        //     } else {
+        //       toast.error('Error al editar el producto.');
+        //     }
+        //   }).catch((err) => {
+        //     toast.error(err.message);
+        //   })
+        // }
         return;
       }
       axios.post('cestas/clickTeclaArticulo', {

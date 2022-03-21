@@ -35,6 +35,21 @@
             <button class="btn btn-primary buttonSizeTecnico" @click="imprimirTest()">Imprimir test</button>
           </div>
       </div>
+      <div class="row text-center mt-2">
+          <div class="col">
+            <button class="btn btn-primary buttonSizeTecnico" data-bs-toggle="modal" data-bs-target="#modalAddProducto">Añadir producto</button>
+          </div>
+      </div>
+      <div class="row text-center mt-2">
+          <div class="col">
+            <button class="btn btn-primary buttonSizeTecnico" @click="cambiarPrecio()">Cambiar precio</button>
+          </div>
+      </div>
+      <div class="row text-center mt-2">
+          <div class="col">
+            <button class="btn btn-primary buttonSizeTecnico" @click="actualizarEnvioDatos()">Enviar datos: {{ enviarDatos ? 'SÍ' : 'NO' }}</button>
+          </div>
+      </div>
   </div>
   <div class="position-fixed bottom-0 start-0 ms-2 mb-2">
       <button class="btn btn-warning buttonSizeTecnico" @click="volver()">Volver</button>
@@ -97,15 +112,16 @@ import router from '../router/index';
 import { useToast } from 'vue-toastification';
 import { ref } from '@vue/reactivity';
 import { onMounted } from '@vue/runtime-core';
-
+import { useStore } from 'vuex';
 
 export default {
     setup() {
         const toast = useToast();
+        const store = useStore();
         const vid = ref('');
         const pid = ref('');
         const ipPaytef = ref('');
-
+        const enviarDatos = ref(true);
         function descargarClientesFinales() {
             axios.post('clientes/descargarClientesFinales').then((res) => {
                 if (res.data.error == false) {
@@ -174,6 +190,11 @@ export default {
                 }
             });
         }
+        
+        function cambiarPrecio() {
+            store.dispatch('setModoActual', 'MODIFICAR_ARTICULO');
+            router.push('/');
+        }
 
         function descargarTicketInfo() {
             axios.post('params-ticket/descargarInfoTicket').then((res) => {
@@ -224,7 +245,9 @@ export default {
             descargarTicketInfo,
             volver,
             descargarClientesFinales,
-            actualizarTeclados
+            actualizarTeclados,
+            enviarDatos,
+            cambiarPrecio,
         };     
     },
 }
