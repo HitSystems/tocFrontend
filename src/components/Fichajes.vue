@@ -29,8 +29,17 @@
                         <span><i class="bi bi-file-earmark-lock"></i></span>
                         <button @click="abrirModalPassword()" class="btn btn-primary">Menú responsable</button>
                     </div>
+               
+            </div>
+            <div class='row ms-3'>
+             </div> <div class="card cardWidth">
+                    <div class="card-body" style='text-align: center;'>
+                        <span><i class="bi bi-door-open"></i></span>
+                        <button @click="desfichar()" class="btn btn-primary">DesFichar</button>
+                    </div>
                 </div>
             </div>
+            
         </div>
     </div>
     <!-- <div class="row mt-2">
@@ -257,26 +266,34 @@ export default {
             });
         }
 
-        function desfichar(trabajador, index) {
-            axios.post('trabajadores/desfichar', { idTrabajador: trabajador.idTrabajador }).then((res) => {
+        function desfichar() {
+            axios.post('trabajadores/desfichar', { idTrabajador: store.state.Trabajadores.trabajadorActivo }).then((res) => {
                 if (!res.data.error) {
-                    arrayTrabajadores.value[index].fichado = false;
-                    store.dispatch('CestasActivas/deleteCestaActivaAction', trabajador.idTrabajador);
-                    axios.post('cestas/getCestaDiferente', { id_cesta: trabajador.idTrabajador }).then((data) => {
+                  //  arrayTrabajadores.value[index].fichado = false;
+                    store.dispatch('CestasActivas/deleteCestaActivaAction',store.state.Trabajadores.trabajadorActivo);
+                    axios.post('cestas/getCestaDiferente', { id_cesta: store.state.Trabajadores.trabajadorActivo }).then((data) => {
                         store.dispatch('Cesta/setIdAction', data.data._id);
                         // store.dispatch('Trabajadores/setTrabajadorActivo', parseInt(data.data._id));
                         axios.post('trabajadores/setActivo', { id: data.data._id }).then((data2) =>{
                             if (data2.data.error) {
-                                toast.error(data2.data.mensaje);
+                               toast.error(data2.data.mensaje);
                             } 
+                            
+                        
                         });
+                        router.push('/')
+                    }).catch((err)=>{
+                        console.log(err);
                     })
+
                 } else {
                     console.log('Error al desfichar');
                 }
             }).catch((err) => {
                 console.log(err);
             });
+          
+            
         }
 
         function consumoPersonal() {
