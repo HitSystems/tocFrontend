@@ -350,14 +350,24 @@ export default {
 
     function checkPaytefResponse(paytef) {
       if (!paytef.data.error) {
-        return paytef.data.info;
+        if (!paytef.data.continuo) {
+          store.dispatch('setEsperandoDatafono', false);
+          store.dispatch('Cesta/setIdAction', -1);
+          store.dispatch('setModoActual', 'NORMAL');
+          store.dispatch('Clientes/resetClienteActivo');
+          store.dispatch('Footer/resetMenuActivo');
+          router.push({ name: 'Home', params: { tipoToast: 'success', mensajeToast: 'Ticket creado' } });
+        }
+        return paytef.data.continuo;
       } else {
+        toast.error(paytef.data.mensaje);
+        store.dispatch('setEsperandoDatafono', false);
         return false;
       }
     }
 
     function consultaFinalPaytef() {
-      axios.post('paytef/resultadoFinal', { idClienteFinal: infoCliente }).then((res) => {
+      axios.get('paytef/resultadoFinal').then((res) => {
         store.dispatch('setEsperandoDatafono', false);
 
         if (res.data.error == false) {
@@ -377,10 +387,12 @@ export default {
 
     async function consultarPaytef() {
       setEsperando(true);
-      while(checkPaytefResponse(await axios.get('paytef/polling'))) {
-        123
-      }
-      consultaFinalPaytef();
+      let resPolling = null;
+      do {
+        resPolling = checkPaytefResponse(await axios.get('paytef/polling'))
+      } while(resPolling);
+
+      // consultaFinalPaytef();
     }
 
     async function cobrar() {
@@ -463,7 +475,7 @@ export default {
                   emitSocket('enviarAlDatafono', { total: Number(total), idCesta: cestaId, idClienteFinal: infoCliente });
                   setEsperando(true);
                 } else if (resParams.data.parametros.tipoDatafono == 'PAYTEF') {
-                  axios.post('paytef/iniciarTransaccion', { cantidad: Number(total), idCesta: cestaId, idClienteFinal: infoCliente }).then((resPaytef) => {
+                  axios.post('paytef/iniciarTransaccion', { idClienteFinal: infoCliente }).then((resPaytef) => {
                     if (resPaytef.data.error == true) {
                       toast.error(resPaytef.data.mensaje);
                     } else {
