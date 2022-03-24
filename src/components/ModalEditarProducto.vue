@@ -7,9 +7,14 @@
         </div>
         <div class="modal-body">
           <div class="row">
-            <input type='text' v-model='nombre' />
-            <input type='number' v-model='precioBase' />
-            <input type='number' :value='(precioBase*tipoIva).toFixed(2)' disabled />
+            <label for='nombre'>Nombre producto <input id='nombre' type='text' class='form-control' v-model='nombre' /></label>
+            
+            <label for='precioBase'>Precio base <input id='precioBase' type='number' class='form-control' v-model='precioBase' /></label>
+            
+            <label for='precioIva'>Precio con {{parseInt(tipoIva.toString().split('.')[1])}}% de IVA 
+              <input id='precioIva' type='number' class='form-control' :value='(precioBase*parseFloat(tipoIva)).toFixed(2)' disabled />
+            </label>
+            
           </div>
         </div>
         <div class="modal-footer">
@@ -58,7 +63,7 @@ export default {
         nombre.value = store.state.ModalEditarProducto.nombre;
         precioBase.value = store.state.ModalEditarProducto.precioBase;
         id.value = store.state.ModalEditarProducto.idArticulo;
-        tipoIva.value = store.state.ModalEditarProducto.tipoIva == 1 ? 1.04 : store.state.ModalEditarProducto.tipoIva == 2 ? 1.10 : 1.21;
+        tipoIva.value = store.state.ModalEditarProducto.tipoIva == 1 ? '1.04' : store.state.ModalEditarProducto.tipoIva == 2 ? '1.10' : '1.21';
     })
     return {
         store,
