@@ -14,12 +14,15 @@
             <label for='precioIva'>Precio con {{parseInt(tipoIva.toString().split('.')[1])}}% de IVA 
               <input id='precioIva' type='number' class='form-control' :value='(precioBase*parseFloat(tipoIva)).toFixed(2)' disabled />
             </label>
-            
           </div>
         </div>
         <div class="modal-footer">
           <button type="button"
-          class="btn btn-secondary btn-lg mr-0"
+          class="btn btn-success mr-0"
+          @click="cambiarPosicion()">Cambiar posición
+          </button>
+          <button type="button"
+          class="btn btn-primary mr-0"
           @click="confirmar()">OK
           </button>
         </div>
@@ -47,12 +50,18 @@ export default {
     const tipoIva = ref(0);
     const nombre = ref('');
     const id = ref(-1);
+    const menus = ref([]);
 
     function confirmar() {
         axios.post('articulos/editarArticulo', { idArticulo: id.value, nombre: nombre.value, precioBase: precioBase.value, precioConIva: (precioBase.value*tipoIva.value).toFixed(2) }).then((data) => {
             console.log(data);
-            store.dispatch('ModalEditarArticulo/cerrarModal');
+            store.dispatch('ModalEditarProducto/cerrarModal');
         })
+    }
+
+    function cambiarPosicion() {
+      store.dispatch('ModalEditarProducto/cerrarModal');
+      store.dispatch('setModoActual', 'MOVER_ARTICULO');
     }
 
     onMounted(() => {
@@ -66,13 +75,14 @@ export default {
         tipoIva.value = store.state.ModalEditarProducto.tipoIva == 1 ? '1.04' : store.state.ModalEditarProducto.tipoIva == 2 ? '1.10' : '1.21';
     })
     return {
-        store,
         nombre,
         precioBase,
         precioConIva,
         id,
         tipoIva,
         confirmar,
+        menus,
+        cambiarPosicion,
     };
     /* FINAL SETUP */
   },
