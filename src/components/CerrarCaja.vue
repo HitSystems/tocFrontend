@@ -310,7 +310,7 @@ export default {
 
     function cerrarCaja() {
       if (cantidad3G.value == 0) {
-        if (1==1) { //confirm("Has marcado 0 € de datáfono de banco (3G), ¿Estás segur@?")) {
+        if (confirm("Has marcado 0 € de datáfono de banco (3G), ¿Estás segur@?")) {
           cerrarCajaReal();
         }
       } else {

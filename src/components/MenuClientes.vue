@@ -10,9 +10,9 @@
                <button type="button" class="btn btn-info btn-lg mr-0" @click="selectUber()">
                    Uber
                 </button>
-               <!-- <button type="button" class="btn btn-info btn-lg mr-0" @click="selectDeliveroo()">
-                   Deliveroo
-                </button> -->
+               <button type="button" class="btn btn-dark btn-lg mr-0" @click="selectToGoodToGo()">
+                   To Go
+                </button>
                <button type="button" class="btn btn-success btn-lg mr-0"  data-bs-toggle="modal" data-bs-target="#modalNuevoCliente">
                    NUEVO
                 </button>
@@ -96,6 +96,7 @@ export default {
     const GLOVO = store.getters['Clientes/getGlovo'];
     const DELIVEROO = store.getters['Clientes/getDeliveroo'];
     const UBER = store.getters['Clientes/getUber'];
+    const TOO_GOOD_TO_GO = store.getters['Clientes/getTooGoodToGo'];
     const nombre = 'Santy';
     const inputBusqueda = ref('');
     const nombreClienteNuevo = ref('');
@@ -117,9 +118,22 @@ export default {
       }); 
     }
 
-    function selectDeliveroo() {
-       console.log("DELIVEROO: ", DELIVEROO);
-      axios.post('clientes/getClienteByID', { idCliente: DELIVEROO }).then((res) => {
+   //  function selectDeliveroo() {
+   //     console.log("DELIVEROO: ", DELIVEROO);
+   //    axios.post('clientes/getClienteByID', { idCliente: DELIVEROO }).then((res) => {
+   //       if (!res.data.error) {
+   //          selectCliente(res.data.infoCliente);
+   //       } else {
+   //          toast.error(res.data.mensaje);
+   //       }
+   //    }).catch((err) => {
+   //       console.log(err);
+   //       toast.error(res.data.mensaje);
+   //    }); 
+   //  }
+
+    function selectToGoodToGo() {
+      axios.post('clientes/getClienteByID', { idCliente: TOO_GOOD_TO_GO }).then((res) => {
          if (!res.data.error) {
             selectCliente(res.data.infoCliente);
          } else {
@@ -247,8 +261,8 @@ export default {
       nombre,
       arrayClientes,
       selectGlovo,
-      selectDeliveroo,
       selectUber,
+      selectToGoodToGo,
       selectCliente,
       clienteActivo,
       nombreClienteNuevo,

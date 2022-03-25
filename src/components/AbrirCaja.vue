@@ -125,10 +125,10 @@
     </div>
     
     <div class="input-group position-absolute bottom-0 start-0 mb-4 ms-2">
-      <button class="btn btn-danger ms-2" style="font-size: 27px;"
+      <!-- <button class="btn btn-danger ms-2" style="font-size: 27px;"
         @click="resetTodo()">
         RESET LIMPIAR TODO
-      </button>
+      </button> -->
       <button class="btn btn-primary ms-2" style="font-size: 27px;"
         @click="abrirModalConfirmacion()">
         ABRIR CON {{getTotal.toFixed(2)}} €
