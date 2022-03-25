@@ -49,7 +49,7 @@
 
     </div>
 
-    <div v-if="menuActivo === 1 && infoCliente.id != DELIVEROO && infoCliente.id != GLOVO && infoCliente.id != UBER"  class="col text-center"
+    <div v-if="menuActivo === 1 && infoCliente.id != DELIVEROO && infoCliente.id != GLOVO && infoCliente.id != UBER && infoCliente.id != TOO_GOOD_TO_GO"   class="col text-center"
     :class="{
       tipoNormal: modoActual === 'NORMAL',
       tipoDevolucion: modoActual === 'DEVOLUCION',
@@ -86,6 +86,12 @@
     <div class="col text-center" v-if="infoCliente.id === UBER && menuActivo === 1"
     style="max-width: 245px; max-height: 196px;">
       <img src="../assets/logoUber.png" width="200" alt="Logo Uber">
+    </div>
+
+    <!-- VISTA TOO GOOD TO GO -->
+    <div class="col text-center" v-if="infoCliente.id === TOO_GOOD_TO_GO && menuActivo === 1"
+    style="max-width: 245px; max-height: 196px;">
+      <img src="../assets/tooGoodToGo.png" width="200" alt="Logo Too Good To Go">
     </div>
 
     <div class="col" style="max-width:50px"
@@ -282,6 +288,7 @@ export default {
     const GLOVO = store.getters['Clientes/getGlovo'];
     const DELIVEROO = store.getters['Clientes/getDeliveroo'];
     const UBER = store.getters['Clientes/getUber'];
+    const TOO_GOOD_TO_GO = store.getters['Clientes/getTooGoodToGo'];
     const getClock = ref('');
 
   function actualizarHora() {
@@ -590,9 +597,11 @@ export default {
         toast.error('Error. Comprobar consola.');
       });
     }
+    
     function cerrarModal() {
       modalSuplementos.hide();
     }
+
     function borrar() {
       if (activo.value === null) {
         /* eslint no-underscore-dangle: 0 */
@@ -635,6 +644,7 @@ export default {
       unidades,
       buscarProducto,
       GLOVO,
+      TOO_GOOD_TO_GO,
       DELIVEROO,
       UBER,
       thisIsCatalunya,
