@@ -9,10 +9,8 @@
           <div class="row">
             <label for='nombre'>Nombre producto <input id='nombre' type='text' class='form-control' v-model='nombre' /></label>
             
-            <label for='precioBase'>Precio base <input id='precioBase' type='number' class='form-control' v-model='precioBase' /></label>
-            
             <label for='precioIva'>Precio con {{parseInt(tipoIva.toString().split('.')[1])}}% de IVA 
-              <input id='precioIva' type='number' class='form-control' :value='(precioBase*parseFloat(tipoIva)).toFixed(2)' disabled />
+              <input id='precioIva' type='number' class='form-control' v-model='precioConIva' />
             </label>
           </div>
         </div>
@@ -53,7 +51,7 @@ export default {
     const menus = ref([]);
 
     function confirmar() {
-        axios.post('articulos/editarArticulo', { idArticulo: id.value, nombre: nombre.value, precioBase: precioBase.value, precioConIva: (precioBase.value*tipoIva.value).toFixed(2) }).then((data) => {
+        axios.post('articulos/editarArticulo', { idArticulo: id.value, nombre: nombre.value, precioBase: (parseFloat(precioConIva.value)/parseFloat(tipoIva.value)), precioConIva: parseFloat(precioConIva.value) }).then((data) => {
             console.log(data);
             store.dispatch('ModalEditarProducto/cerrarModal');
         })
@@ -70,7 +68,7 @@ export default {
 
     watch(() => store.getters['ModalEditarProducto/getNombre'], () => {
         nombre.value = store.state.ModalEditarProducto.nombre;
-        precioBase.value = store.state.ModalEditarProducto.precioBase;
+        precioConIva.value = store.state.ModalEditarProducto.precioConIva;
         id.value = store.state.ModalEditarProducto.idArticulo;
         tipoIva.value = store.state.ModalEditarProducto.tipoIva == 1 ? '1.04' : store.state.ModalEditarProducto.tipoIva == 2 ? '1.10' : '1.21';
     })

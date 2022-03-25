@@ -559,34 +559,34 @@ export default {
       console.log(objListadoTeclas)
       // Eze, no le hagas caso a esto, de momento no sirve
       if(modoActual.value === 'MODIFICAR_ARTICULO' || modoActual.value === 'MOVER_ARTICULO') {
-        // if(idArticulo === -1) {
-        //   if(modoActual.value === 'MOVER_ARTICULO') {
-        //     const idTecla = parseInt(objListadoTeclas.idBoton.replace('tecla', ''));
-        //     axios.post('teclado/cambiarPosTecla', { idArticle: store.state.ModalEditarProducto.idArticulo, nuevaPos: idTecla, nombreMenu: listaMenus.value[menuActivo].nomMenu }).then((res) => {
-        //       if(!res.data.error) {
-        //         toast.success('Tecla cambiada de posición');
-        //         return;
-        //       }
-        //       toast.error('Error al cambiar la tecla de posición');
-        //       console.log(res.data.mensaje);       
-        //     }).catch((err) => {
-        //       toast.error('Error general');
-        //       console.log(err)
-        //     })
-        //     return;
-        //   }
-        //   alert('Has tocado una tecla vacía.')
-        // } else {
-        //   axios.post('articulos/getArticulo', { idArticulo }).then(({ data }) => {
-        //     if(!data.error) {
-        //       store.dispatch('ModalEditarProducto/abrirModal', { idArticulo, precioBase: data.info.precioBase, nombre: data.info.nombre, tipoIva: data.info.tipoIva });
-        //     } else {
-        //       toast.error('Error al editar el producto.');
-        //     }
-        //   }).catch((err) => {
-        //     toast.error(err.message);
-        //   })
-        // }
+        if(idArticulo === -1) {
+          if(modoActual.value === 'MOVER_ARTICULO') {
+            const idTecla = parseInt(objListadoTeclas.idBoton.replace('tecla', ''));
+            axios.post('teclado/cambiarPosTecla', { idArticle: store.state.ModalEditarProducto.idArticulo, nuevaPos: idTecla, nombreMenu: listaMenus.value[menuActivo].nomMenu }).then((res) => {
+              if(!res.data.error) {
+                toast.success('Tecla cambiada de posición');
+                return;
+              }
+              toast.error('Error al cambiar la tecla de posición');
+              console.log(res.data.mensaje);       
+            }).catch((err) => {
+              toast.error('Error general');
+              console.log(err)
+            })
+            return;
+          }
+          alert('Has tocado una tecla vacía.')
+        } else {
+          axios.post('articulos/getArticulo', { idArticulo }).then(({ data }) => {
+            if(!data.error) {
+              store.dispatch('ModalEditarProducto/abrirModal', { idArticulo, precioConIva: data.info.precioConIva, nombre: data.info.nombre, tipoIva: data.info.tipoIva });
+            } else {
+              toast.error('Error al editar el producto.');
+            }
+          }).catch((err) => {
+            toast.error(err.message);
+          })
+        }
         return;
       }
       axios.post('cestas/clickTeclaArticulo', {
@@ -681,7 +681,7 @@ export default {
     }
     getSubmenus();
     function isEditarArticulos(index) {
-      return modoActual.value === 'MODIFICAR_ARTICULO' || modoActual.value === 'MOVER_ARTICULO' && index === -1 ? true : false;
+      return (modoActual.value === 'MODIFICAR_ARTICULO' || modoActual.value === 'MOVER_ARTICULO') && index === -1 ? true : false;
     }
     onMounted(() => {
       modalSuplementos = new Modal(document.getElementById('modalSuplementos'), {

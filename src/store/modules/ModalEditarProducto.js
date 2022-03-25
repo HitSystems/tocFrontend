@@ -5,14 +5,14 @@ export default {
   state: {
     modal: null,
     idArticulo: 0,
-    precioBase: 0,
+    precioConIva: 0,
     nombre: '',
     tipoIva: 0,
   },
   mutations: {
     abrirModalMutation(state, payload) {
         state.idArticulo = payload.idArticulo;
-        state.precioBase = payload.precioBase;
+        state.precioConIva = payload.precioConIva;
         state.nombre = payload.nombre;
         state.tipoIva = payload.tipoIva;
         state.modal.show();

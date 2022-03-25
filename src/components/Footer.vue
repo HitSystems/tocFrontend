@@ -60,6 +60,7 @@
       <p v-if="modoActual == 'CONSUMO PERSONAL'" class="estiloConsumoPersonal">PERSONAL</p>
       <p v-if="modoActual == 'DEVOLUCION'" class="tipoDevolucion">{{modoActual}}</p>
       <p v-if="modoActual == 'MODIFICAR_ARTICULO'" class="tipoDevolucion">EDITAR ARTÍCULOS</p>
+      <p v-if="modoActual == 'MOVER_ARTICULO'" class="tipoDevolucion">MOVER ARTÍCULO</p>
       <p v-if="modoActual == 'NORMAL'" class="tipoNormal">{{modoActual}}</p>
       <p v-if="modoActual == 'CLIENTE'" class="infoCliente">
         {{infoCliente.puntos}} puntos
@@ -153,7 +154,7 @@
         <button
           class="btn btn-secondary w-100 botonesPrincipales menusColorIvan"
           @click="goToCobrar()"><i class="bi bi-cash-coin sizeBotonCobrar"></i>
-          <span class="sizeBotonCobrar">&nbsp;{{thisIsCatalunya}} €</span>
+          <span class="sizeBotonCobrar">&nbsp;{{modoActual === 'MODIFICAR_ARTICULO' || modoActual === 'MOVER_ARTICULO' ? 'OK' : `${thisIsCatalunya}€`}} </span>
         </button>
       </div>
     </div>
@@ -470,6 +471,11 @@ export default {
     }
 
     function goToCobrar() {
+      if(modoActual.value === 'MODIFICAR_ARTICULO' || modoActual.value === 'MOVER_ARTICULO') {
+        store.dispatch('setModoActual', 'NORMAL');
+        router.push('/');
+        return;
+      }
       if (trabajadorActivo.value != '') {
         let pagaEnTienda = store.getters['Clientes/getClientePagaEnTienda'];
         let modoActual = store.getters['getModoActual'];
