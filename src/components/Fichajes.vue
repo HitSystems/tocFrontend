@@ -29,15 +29,26 @@
                         <span><i class="bi bi-file-earmark-lock"></i></span>
                         <button @click="abrirModalPassword()" class="btn btn-primary">Menú responsable</button>
                     </div>
+                    
                
+                </div>
+            <div class="card cardWidth">
+                    <div class="card-body" style='text-align: center;'>
+                        <span><i class="bi bi-power"></i></span>
+                        <button @click="apagarEquipo()" class="btn btn-danger">Apagar</button>
+                    </div>
+                </div>
             </div>
             <div class='row ms-3'>
-             </div> <div class="card cardWidth">
+
+                <div class="card cardWidth">
                     <div class="card-body" style='text-align: center;'>
                         <span><i class="bi bi-door-open"></i></span>
                         <button @click="desfichar()" class="btn btn-primary">DesFichar</button>
                     </div>
                 </div>
+              
+                
             </div>
             
         </div>
@@ -110,7 +121,7 @@
                                     <tr v-for="(trabajador, index) of arrayTrabajadores" v-bind:key="index">
                                         <td>{{trabajador.nombre}}</td>
                                         <td v-if="trabajador.fichado === false || trabajador.fichado == undefined"><a href="#" style="width: 150px" class="btn btn-outline-primary btn_fc" @click="fichar(trabajador, index)">FICHAR</a></td>
-                                        <td v-else><a href="#" style="width: 150px" class="btn btn-outline-success btn_fc" @click="desfichar(trabajador, index)">DESFICHAR</a></td>
+                                        
                                     </tr>
                                 </tbody>
                             </table>
@@ -305,6 +316,21 @@ export default {
         function goTo(x) {
             router.push(x);
         }
+        function apagarEquipo(){
+            
+              axios.get('apagarEquipo').then((res) => {
+                 console.log(res.data)
+                if (res.data.error == false) {
+                    console.log('he lllegado al apagar equipo !!!')
+                  console.log(res.data.mensaje)
+                } else {
+                   
+                }
+            }).catch((err) => {
+                console.log(err);
+                toast.error('Error frontend catch: axios apagar/apagar');
+            });
+        }
 
         onMounted(() => {
             modalFichajes = new Modal(document.getElementById('modalFichajes'), {
@@ -342,6 +368,7 @@ export default {
             buscar,
             cerrarModal,
             abrirModal,
+            apagarEquipo,
             nombre,
             id,
         };
