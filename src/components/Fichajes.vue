@@ -121,7 +121,7 @@
                                     <tr v-for="(trabajador, index) of arrayTrabajadores" v-bind:key="index">
                                         <td>{{trabajador.nombre}}</td>
                                         <td v-if="trabajador.fichado === false || trabajador.fichado == undefined"><a href="#" style="width: 150px" class="btn btn-outline-primary btn_fc" @click="fichar(trabajador, index)">FICHAR</a></td>
-                                        
+                                         <td v-else><a href="#" style="width: 150px" class="btn btn-success">Fichada/o</a></td>
                                     </tr>
                                 </tbody>
                             </table>
