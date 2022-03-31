@@ -441,6 +441,9 @@ export default {
     function crearDevolucion(total, idCesta) {
       axios.post('devoluciones/nuevaDevolucion', {total, idCesta}).then((res) => {
         if (res.data.error == false) {
+          axios.post('promociones/setEstadoPromociones', {
+            estadoPromociones: true
+          });
           axios.post('/cestas/getCesta').then((res) => {
             store.dispatch('Cesta/setCestaAction', res.data);
           });
