@@ -23,9 +23,6 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" data-bs-dismiss="modal" class="btn btn-primary">
-                        VOLVER
-                    </button>
                     <button type="button" class="btn btn-danger" @click="confirmarSalida()">
                         CONFIRMAR SALIDA
                     </button>
@@ -39,6 +36,7 @@ import axios from 'axios';
 import { ref, onMounted } from 'vue';
 import { Modal } from 'bootstrap';
 import { useToast } from 'vue-toastification';
+import router from '../router/index';
 
 export default {
     name: 'SalidaDinero',
@@ -64,6 +62,7 @@ export default {
                     } else {
                         toast.error(res.data.mensaje);
                     }
+                    router.push('/');
                 }).catch((err) => {
                     console.log(err);
                     toast.error('Error movimientos/nuevaSalida');
