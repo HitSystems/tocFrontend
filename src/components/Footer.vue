@@ -487,6 +487,7 @@ export default {
         router.push('/');
         return;
       }
+      if (getTotal.value !=0){
       if (trabajadorActivo.value != '') {
         let pagaEnTienda = store.getters['Clientes/getClientePagaEnTienda'];
         let modoActual = store.getters['getModoActual'];
@@ -509,6 +510,9 @@ export default {
         }
       } else {
         toast.info('¡ Es necesario un trabajador/a activ@ !');
+      }
+      }else{
+        toast.error('¡Seleciona un artículo para cobrar!')
       }
     }
 
