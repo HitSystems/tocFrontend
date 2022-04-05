@@ -37,17 +37,7 @@
       </div>
       <div class="row text-center mt-2">
           <div class="col">
-            <button class="btn btn-primary buttonSizeTecnico" data-bs-toggle="modal" data-bs-target="#modalAddProducto">Añadir producto</button>
-          </div>
-      </div>
-      <div class="row text-center mt-2">
-          <div class="col">
             <button class="btn btn-primary buttonSizeTecnico" @click="cambiarPrecio()">Editar productos</button>
-          </div>
-      </div>
-      <div class="row text-center mt-2">
-          <div class="col">
-            <button class="btn btn-primary buttonSizeTecnico" @click="actualizarEnvioDatos()">Enviar datos: {{ enviarDatos ? 'SÍ' : 'NO' }}</button>
           </div>
       </div>
       <div class="row text-center mt-2">
