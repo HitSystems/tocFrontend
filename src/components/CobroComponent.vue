@@ -264,7 +264,11 @@ export default {
     }
 
     function volver() {
-      router.push('/');
+      if (!esperando.value) {
+        router.push('/');
+      } else {
+        toast.info("Hay una operación pendiente, debes cancelarla antes de salir.");
+      }      
     }
 
     function agregarComa() {
@@ -500,8 +504,6 @@ export default {
           // {tkrs: false});
         }
         // console.log('el total es: ', Number(vueCesta.getTotalEstatico()));
-      } else {
-        // vueToast.abrir('danger', 'Ya existe una operación en curso');
       }
     }
 
