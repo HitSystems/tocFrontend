@@ -204,13 +204,15 @@ export default {
         }
 
         function abrirModal() {
-            // modalFichajes.show();
-            actualizarTurnos().then(() => {
-                modalFichajes.show();
-            }).catch((err) => {
-                console.log(err);
-                modalFichajes.show();
-            });            
+            modalFichajes.show();
+
+            //La peticion que solo tiene que hacer silema 
+            // actualizarTurnos().then(() => {
+            //     modalFichajes.show();
+            // }).catch((err) => {
+            //     console.log(err);
+            //     modalFichajes.show();
+            // });            
         }
         function abrirModalPassword() {
             modalPassword.show();
@@ -321,7 +323,7 @@ export default {
               axios.get('apagarEquipo').then((res) => {
                  console.log(res.data)
                 if (res.data.error == false) {
-                    console.log('he lllegado al apagar equipo !!!')
+          
                   console.log(res.data.mensaje)
                 } else {
                    
