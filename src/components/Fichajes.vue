@@ -103,10 +103,11 @@
                     <button type="button" style="width: 100px" class="btn btn-primary ms-2" @click="buscar()">Buscar</button>
                     <button type="button" style="width: 200px" class="btn btn-warning ms-2" @click="actualizarLista()">Actualizar lista</button>
                     <div class="row mt-2">
-                        <select v-model="idPlanificacion" class="form-select" style="height: 50px; font-size: 20px">
+                        <!-- Selcion de los turnos solo para silema  -->
+                        <!-- <select v-model="idPlanificacion" class="form-select" style="height: 50px; font-size: 20px">
                             <option value="SIN_TURNO">Sin turno</option>
                             <option v-for="(item, index) in arrayPlanes" :key="index" :value="arrayPlanes[index].idPlan">{{arrayPlanes[index].turno}}</option>
-                        </select>
+                        </select> -->
                     </div>
                     <div class="row mt-2">
                         <div class="table" style="height: 400px;">
@@ -248,7 +249,7 @@ export default {
                 if (!res.data.error) {
                     store.dispatch('Cesta/setIdAction', trabajador.idTrabajador);
                     arrayTrabajadores.value[index].fichado = true;
-                    actualizarTurnos();
+                   // actualizarTurnos();
                     idPlanificacion.value = 'SIN_TURNO';
                 } else {
                     console.log(res.data.mensaje);
