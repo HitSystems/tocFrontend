@@ -129,22 +129,27 @@
                   src="../assets/imagenes/img-restaurant.png"
                   alt="tkrs" width="185">
               </div>
+              <div v-if="tipoDatafono == 'PAYTEF'" class="col text-center">
+                <img
+                  @click="cancelarOperacionDatafono()"
+                  src="../assets/imagenes/img-cancelar-paytef.png"
+                  alt="tkrs" width="185">
+              </div>
             </div>
             <div class="row mt-2" :class="{'datafonoEsperando': !esperando}">
-              <div class="col text-center">
-                <img src="../assets/imagenes/loading.gif"
-                 alt="Esperando respuesta del datáfono">
+              <div class="spinner-border mx-auto" style="width: 5rem; height: 5rem;" role="status">
+                <span class="visually-hidden">Loading...</span>
               </div>
             </div>
           </div>
       </div>
   </div>
   <div class="position-absolute bottom-0 start-0 mb-2" style="position: absolute;">
-      <div class="ms-2 mb-2 row" role="group" aria-label="First group">
+      <!-- <div class="ms-2 mb-2 row" role="group" aria-label="First group">
         <div class='col'>
           <button type="button" class="btn btn-dark ms-2 botonesPrincipales" @click="enviarACocina()">Enviar a cocina</button>
         </div>
-      </div>
+      </div> -->
       <div class="row ms-2" role="group" aria-label="First group">
         <div class='col'>
         <button type="button"
@@ -230,10 +235,11 @@ export default {
     const tkrs = ref(false);
     const cuentaAsistenteV = ref(0);
     const cuentaAsistenteTecladoV = ref(0);
-    const metodoPagoActivo = ref('EFECTIVO');
+    const metodoPagoActivo = ref('TARJETA');
     const totalTkrs = ref(0);
     const cuenta = ref(0);
     const arrayFichados = ref([]);
+    const tipoDatafono = ref(null);
     const esperando = computed(() => store.state.esperandoDatafono); // ref(false);
     /* eslint no-underscore-dangle: ["error", { "allow": ["_id"] }] */
 
@@ -263,12 +269,23 @@ export default {
       cuentaAsistenteTecladoV.value = String(Number(cuentaAsistenteTecladoV.value + x));
     }
 
+    function cancelarOperacionDatafono() {
+      axios.get('paytef/cancelarOperacionActual').then((res) => {
+        if (!res.data) {
+          toast.error("Error, no se ha podido cancelar la operación en curso");
+        }
+      }).catch((err) => {
+        console.log(err);
+        toast.error("Error catch cancelar operación");
+      });
+    }
+
     function volver() {
       if (!esperando.value) {
         router.push('/');
       } else {
         toast.info("Hay una operación pendiente, debes cancelarla antes de salir.");
-      }      
+      }
     }
 
     function agregarComa() {
@@ -353,16 +370,17 @@ export default {
     }
 
     function checkPaytefResponse(paytef) {
-      if (!paytef.data.error) {
-        if (!paytef.data.continuo) {
+      if (paytef.data.error === false) {
+        if (paytef.data.continuo === false) { // Única forma de saber si el pago se ha hecho
           store.dispatch('setEsperandoDatafono', false);
           store.dispatch('Cesta/setIdAction', -1);
           store.dispatch('setModoActual', 'NORMAL');
           store.dispatch('Clientes/resetClienteActivo');
           store.dispatch('Footer/resetMenuActivo');
           router.push({ name: 'Home', params: { tipoToast: 'success', mensajeToast: 'Ticket creado' } });
+          return false;
         }
-        return paytef.data.continuo;
+        return true;
       } else {
         toast.error(paytef.data.mensaje);
         store.dispatch('setEsperandoDatafono', false);
@@ -370,32 +388,36 @@ export default {
       }
     }
 
-    function consultaFinalPaytef() {
-      axios.get('paytef/resultadoFinal').then((res) => {
-        store.dispatch('setEsperandoDatafono', false);
+    // function consultaFinalPaytef() {
+    //   axios.get('paytef/resultadoFinal').then((res) => {
+    //     store.dispatch('setEsperandoDatafono', false);
 
-        if (res.data.error == false) {
-          store.dispatch('Cesta/setIdAction', -1);
-          store.dispatch('setModoActual', 'NORMAL');
-          store.dispatch('Clientes/resetClienteActivo');
-          store.dispatch('Footer/resetMenuActivo');
-          router.push({ name: 'Home', params: { tipoToast: 'success', mensajeToast: 'Ticket creado' } });
+    //     if (res.data.error == false) {
+    //       store.dispatch('Cesta/setIdAction', -1);
+    //       store.dispatch('setModoActual', 'NORMAL');
+    //       store.dispatch('Clientes/resetClienteActivo');
+    //       store.dispatch('Footer/resetMenuActivo');
+    //       router.push({ name: 'Home', params: { tipoToast: 'success', mensajeToast: 'Ticket creado' } });
+    //     } else {
+    //       toast.error(res.data.mensaje);
+    //     }
+    //   }).catch((err) => {
+    //     console.log(err);
+    //     toast.error(err.message);
+    //   });
+    // }
+
+    async function consultarPaytef() {
+      axios.get('paytef/polling').then((res) => {
+        if (checkPaytefResponse(res)) { // Continúo sí
+          consultarPaytef();
         } else {
-          toast.error(res.data.mensaje);
+          setEsperando(false);
         }
       }).catch((err) => {
         console.log(err);
-        toast.error(err.message);
+        toast.error("Error de comunicación con pinPad");
       });
-    }
-
-    async function consultarPaytef() {
-      setEsperando(true);
-      let resPolling = null;
-      do {
-        resPolling = checkPaytefResponse(await axios.get('paytef/polling'))
-      } while(resPolling);
-
       // consultaFinalPaytef();
     }
 
@@ -473,31 +495,22 @@ export default {
           }
 
           if (metodoPagoActivo.value === 'TARJETA') {
-            axios.post('parametros/getParametros').then((resParams) => {
-              if (resParams.data.parametros != undefined || resParams.data.parametros != null) {
-                if (resParams.data.parametros.tipoDatafono == 'CLEARONE') {
-                  emitSocket('enviarAlDatafono', { total: Number(total), idCesta: cestaId, idClienteFinal: infoCliente });
+            if (tipoDatafono.value == 'CLEARONE') {
+              emitSocket('enviarAlDatafono', { total: Number(total), idCesta: cestaId, idClienteFinal: infoCliente });
+              setEsperando(true);
+            } else if (tipoDatafono.value == 'PAYTEF') {
+              axios.post('paytef/iniciarTransaccion', { idClienteFinal: infoCliente }).then((resPaytef) => {
+                if (resPaytef.data.error == true) {
+                  toast.error(resPaytef.data.mensaje);
+                } else {
                   setEsperando(true);
-                } else if (resParams.data.parametros.tipoDatafono == 'PAYTEF') {
-                  axios.post('paytef/iniciarTransaccion', { idClienteFinal: infoCliente }).then((resPaytef) => {
-                    if (resPaytef.data.error == true) {
-                      toast.error(resPaytef.data.mensaje);
-                    } else {
-                      store.dispatch('setEsperandoDatafono', true);
-                      consultarPaytef();
-                    }
-                  }).catch((err) => {
-                    console.log(err);
-                    toast.error('Error POST iniciarTransaccion');
-                  });
+                  consultarPaytef();
                 }
-              } else {
-                toast.error('Datáfono no definido en los parámetros');
-              }
-            }).catch((err) => {
-              console.log(err);
-              toast.error('Error de getParametros datáfono');
-            });
+              }).catch((err) => {
+                console.log(err);
+                toast.error('Error POST iniciarTransaccion');
+              });
+            }              
           }
 
           // toc.crearTicket(this.metodoPagoActivo, Number(vueCesta.getTotalEstatico()),
@@ -535,20 +548,18 @@ export default {
     function test() {
       console.log('test vacío');
     }
+    
     onMounted(() => {
-      // socket.on('resDatafono', (data) => {
-      //   console.log(data);
-      //   if (!data.error) {
-      //     router.push('/');
-      //   } else {
-      //     console.log('Error: ', data.mensaje);
-      //   }
-      // });
+      axios.post('parametros/getParametros').then((resParams) => {
+        tipoDatafono.value = resParams.data.parametros.tipoDatafono;
+      }).catch((err) => {
+        console.log(err);
+        toast.error("Error inicialización cobroMenu");
+      });
+
       axios.post('/trabajadores/getTrabajadoresFichados').then((res) => {
         if (!res.data.error) {
-          if (res.data.res.length > 0) {
-            console.log(res.data.res);
-          } else {
+          if (res.data.res.length === 0) {
             console.log('No hay trabajadores fichados');
           }
         } else {
@@ -590,6 +601,8 @@ export default {
       cobrar,
       esperando,
       enviarACocina,
+      cancelarOperacionDatafono,
+      tipoDatafono
     };
   },
 };
@@ -624,5 +637,9 @@ export default {
 
   .datafonoEsperando {
     display: none;
+  }
+
+  .botonCancelarOperacion {
+    font-size: 1.7rem;
   }
 </style>

@@ -556,7 +556,6 @@ export default {
 
     function clickTecla(objListadoTeclas) {
       idArticulo = objListadoTeclas.idArticle;
-      console.log(objListadoTeclas)
       // Eze, no le hagas caso a esto, de momento no sirve
       if(modoActual.value === 'MODIFICAR_ARTICULO' || modoActual.value === 'MOVER_ARTICULO') {
         if(idArticulo === -1) {

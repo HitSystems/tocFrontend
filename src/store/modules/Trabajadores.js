@@ -30,7 +30,6 @@ export default {
         commit('setTrabajadorActivoMutation', data);
       },
       setNombreTrabajadorActivo({ commit }, data) {
-        console.log("Estoy entrando y es:", data);
         commit('setNombreTrabajadorActivoMutation', data)
       }
     },

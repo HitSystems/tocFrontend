@@ -89,7 +89,6 @@ class tocGameV3 {
                                 store.dispatch('Trabajadores/setTrabajadorActivo', infoTrabajador.data.trabajador.idTrabajador);
                                 store.dispatch('Trabajadores/setNombreTrabajadorActivo', infoTrabajador.data.trabajador.nombre);
                                 axios.post('cestas/getCestaByTrabajadorId', { idTrabajador: infoTrabajador.data.trabajador.idTrabajador }).then((resCesta) => {
-                                    console.log("CESTA BUENA: ", resCesta.info);
                                     if (resCesta.data.error === false && resCesta.data.info != null) {
                                         store.dispatch('Cesta/setCestaAction', resCesta.data.info);
                                     } else {                                        
