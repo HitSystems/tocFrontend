@@ -487,7 +487,7 @@ export default {
         router.push('/');
         return;
       }
-      if (getTotal.value !=0){
+      if (getTotal.value != 0) {
       if (trabajadorActivo.value != '') {
         let pagaEnTienda = store.getters['Clientes/getClientePagaEnTienda'];
         let modoActual = store.getters['getModoActual'];
@@ -497,7 +497,7 @@ export default {
         
         /* Si se cumple que es VIP y no paga en tienda, se crea la deuda, sino, cobro normal */
         if ((pagaEnTienda == true && modoActual != 'DEVOLUCION' && modoActual != 'CONSUMO PERSONAL') || (modoActual == 'CLIENTE')) {
-          router.push(`/cobro/${getTotal.value}`);
+          router.push('/cobro');
         } else if(modoActual == 'VIP' && pagaEnTienda == false) {
           crearTicketDeuda(Number(getTotal.value), idCesta, idClienteFinal, infoClienteVip);
         }

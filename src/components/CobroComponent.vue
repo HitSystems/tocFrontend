@@ -215,7 +215,7 @@ import {
 } from 'vue';
 import { useToast } from "vue-toastification";
 import router from '../router/index';
-import { socket, emitSocket } from '../sockets/socket';
+import { emitSocket } from '../sockets/socket';
 
 export default {
   name: 'CobroComponent',
@@ -223,7 +223,7 @@ export default {
     const toast = useToast();
     const route = useRoute();
     const store = useStore();
-    const { total } = route.params;
+    const total = ref(0);
     const modoActual = store.getters['getModoActual'];
     const infoCliente = store.getters['Clientes/getInfoCliente'];
     const sizeMonedas = '100';
@@ -241,8 +241,20 @@ export default {
     const arrayFichados = ref([]);
     const tipoDatafono = ref(null);
     const esperando = computed(() => store.state.esperandoDatafono); // ref(false);
-    /* eslint no-underscore-dangle: ["error", { "allow": ["_id"] }] */
 
+
+    axios.get('cestas/getCestaCurrentTrabajador').then((infoCesta) => {
+      if (infoCesta.data.error === false) {
+        total.value = infoCesta.data.info.tiposIva.importe1 + infoCesta.data.info.tiposIva.importe2 + infoCesta.data.info.tiposIva.importe3;
+      } else {
+        total.value = 0;
+        toast.error(infoCesta.data.error);
+      }
+    }).catch((err) => {
+      console.log(err);
+      toast.error("No se ha podido cargar la cesta");
+    });  
+    
     function getCestaId() {
       return axios.get('cestas/getCestaCurrentTrabajador').then((res) => {
         if (!res.data.error) {
@@ -334,24 +346,24 @@ export default {
     }
 
     const cobrarVariable = computed(() => {
-      if (total - totalTkrs.value <= 0) return 0;
-      return (total - totalTkrs.value).toFixed(2).replace('.', ',');
+      if (total.value - totalTkrs.value <= 0) return 0;
+      return (total.value - totalTkrs.value).toFixed(2).replace('.', ',');
     });
 
     const sobranX = computed(() => {
       if (tkrs.value) {
-        if (total - totalTkrs.value) {
+        if (total.value - totalTkrs.value) {
           botonesCobroActivo = true;
-          return cuenta.value + totalTkrs.value + total;
+          return cuenta.value + totalTkrs.value + total.value;
         }
         botonesCobroActivo = false;
         return cuenta.value;
       }
-      return cuenta.value + totalTkrs.value - total;
+      return cuenta.value + totalTkrs.value - total.value;
     });
 
     const faltaOSobra = computed(() => {
-      if (cuenta.value + totalTkrs.value - total < 0) {
+      if (cuenta.value + totalTkrs.value - total.value < 0) {
         return true;
       }
       return false;
@@ -422,7 +434,7 @@ export default {
     }
 
     async function cobrar() {
-      if (!esperando.value) {
+      if (!esperando.value && total.value > 0) {
         let cestaId = await getCestaId();
         if (totalTkrs.value > 0 && await cestaId != -1) { /* Ticket restaurant activo */
           const data = {
@@ -454,7 +466,7 @@ export default {
         } else { // Sin ticket restaurant (normal)
           if (metodoPagoActivo.value === 'EFECTIVO') {
             axios.post('tickets/crearTicketEfectivo', {
-              total: Number(total),
+              total: Number(total.value),
               idCesta: cestaId,
               idCliente: infoCliente
             }).then((res) => {
@@ -468,6 +480,7 @@ export default {
                 toast.success('Ticket OK');
                 router.push('/');
               } else {
+                console.log(res.data.mensaje);
                 toast.error('Error al insertar el ticket');
               }
             }).catch((err) => {
@@ -499,17 +512,21 @@ export default {
               emitSocket('enviarAlDatafono', { total: Number(total), idCesta: cestaId, idClienteFinal: infoCliente });
               setEsperando(true);
             } else if (tipoDatafono.value == 'PAYTEF') {
-              axios.post('paytef/iniciarTransaccion', { idClienteFinal: infoCliente }).then((resPaytef) => {
-                if (resPaytef.data.error == true) {
-                  toast.error(resPaytef.data.mensaje);
-                } else {
-                  setEsperando(true);
-                  consultarPaytef();
-                }
-              }).catch((err) => {
-                console.log(err);
-                toast.error('Error POST iniciarTransaccion');
-              });
+              // axios.post('paytef/iniciarTransaccion', { idClienteFinal: infoCliente }).then((resPaytef) => {
+              //   if (resPaytef.data.error == true) {
+              //     toast.error(resPaytef.data.mensaje);
+              //   } else {
+              //     setEsperando(true);
+              //     console.log();
+              //     // consultarPaytef();
+              //     // emitSocket('polling');
+              //   }
+              // }).catch((err) => {
+              //   console.log(err);
+              //   toast.error('Error POST iniciarTransaccion');
+              // });
+              setEsperando(true);
+              emitSocket('iniciarTransaccion', { idClienteFinal: infoCliente });
             }              
           }
 
@@ -517,6 +534,8 @@ export default {
           // {tkrs: false});
         }
         // console.log('el total es: ', Number(vueCesta.getTotalEstatico()));
+      } else if(total.value === 0) {
+        toast.error("El valor de la cesta es 0");
       }
     }
 

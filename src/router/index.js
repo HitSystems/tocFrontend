@@ -9,7 +9,7 @@ const routes = [
     component: Home,
   },
   {
-    path: '/cobro/:total',
+    path: '/cobro',
     name: 'Cobro',
     component: () => import('../views/Cobro.vue'),
   },
