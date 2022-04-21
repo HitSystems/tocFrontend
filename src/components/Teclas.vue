@@ -54,11 +54,14 @@
               </button>
             </div>
             <div v-else>
+              <!-- Botones de los productos -->
               <button v-bind:id="listadoTeclas[(index-1)*6+(index2-1)].idBoton"
               class="btn btn-primary rounded-0 w-100 teclas"
               v-bind:class="[listadoTeclas[(index-1)*6+(index2-1)].color,
               {'invisible': listadoTeclas[(index-1)*6+(index2-1)].idArticle == -1 && !isEditarArticulos(listadoTeclas[(index-1)*6+(index2-1)].idArticle)},
               {'editarArticulos': isEditarArticulos(listadoTeclas[(index-1)*6+(index2-1)].idArticle)}]"
+              @mousedown='mousedown()'
+              @mouseup='mouseup( )'
               @click="clickTecla(listadoTeclas[(index-1)*6+(index2-1)]);
               mostrarInfoVisor(listadoTeclas[(index-1)*6+(index2-1)]);"
               v-on:contextmenu="abrirFicha(listadoTeclas[(index-1)*6+(index2-1)].idArticle)"
@@ -131,6 +134,8 @@ export default {
     const listaMenus = ref([{ nomMenu: '' }]);
     const listaSubmenus = ref([{ nombre: '', tag: '' }]);
     const dobleMenu = ref(false);
+    let inicioMagic = null;
+    let finalMagic = null;
     const showBackButton = ref(false);
     let clickBack = false;
     let clickMenuBloqueado = false;
@@ -167,6 +172,19 @@ export default {
         });
       }
       modalSuplementos.hide();
+    }
+      function mouseup(){
+      finalMagic = new Date();
+      const diffTime = Math.abs(finalMagic - inicioMagic);
+      if (diffTime < 2000) {
+        console.log('Pulsación rápida');
+      } else {
+        console.log('Pulsación lenta');
+       
+      }
+    }
+    function mousedown(){
+      inicioMagic = new Date();
     }
     // function test() {
     //   emitSocket('test', { destino: 'La concha de tu hermana' });
@@ -707,6 +725,8 @@ export default {
     });
 
     return {
+      mouseup,
+      mousedown,
       edadState,
       listaMenus,
       menuActivo,

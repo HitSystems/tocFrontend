@@ -17,8 +17,9 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 
 import 'bootstrap';
-
-axios.defaults.baseURL = 'http://localhost:3000'; // BUILD PARA TPV
+var clientIp = requestIp.getClientIp(request);
+    console.log(clientIp);
+axios.defaults.baseURL = 'http://0.0.0.0:3000'; // BUILD PARA TPV
 // axios.defaults.baseURL = 'http://54.195.159.7:3000'; // BUILD PARA SERVIDOR 
 // axios.defaults.baseURL = 'http://34.78.247.153:3000'; // BUILD PARA SERVIDOR(?)
 
