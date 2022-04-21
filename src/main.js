@@ -19,7 +19,7 @@ import 'bootstrap-icons/font/bootstrap-icons.css';
 import 'bootstrap';
 var clientIp = requestIp.getClientIp(request);
     console.log(clientIp);
-axios.defaults.baseURL = 'http://0.0.0.0:3000'; // BUILD PARA TPV
+axios.defaults.baseURL = 'http://192.168.1.46:3000'; // BUILD PARA TPV
 // axios.defaults.baseURL = 'http://54.195.159.7:3000'; // BUILD PARA SERVIDOR 
 // axios.defaults.baseURL = 'http://34.78.247.153:3000'; // BUILD PARA SERVIDOR(?)
 
